@@ -17,8 +17,7 @@ def dashboard():
 
 @app.route('/login', methods=['GET', 'POST'])
 def register():
-    returnedmessage = None
-
+    works = None
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
