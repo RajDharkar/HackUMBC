@@ -1,16 +1,48 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>EcoTrack</title>
-
-<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
-
+  <title>Eco Track</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=public-sans@500,600,700&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
-<div class="content">
-    <main>
-        
-    </main>
-</div>
+    <!-- Navigation -->
+    <nav>
+      <div class="container">
+        <a class="navbar-brand" href="#page-top"><img src="static\imgs\EcoTrackLogo.png" alt="..." class = "navbar-logo"/></a>
+      </div>
+    </nav>
+    
+    <!-- Main Front Page -->
+    <div class="container">
+      <!-- Left Section -->
+      <div class="left-section">
+          <h1>Take the next <strong>STEP</strong>,</h1>
+          <h1>to leave less behind.</h1>
+          <p>Managing your carbon-footprint has never been easier.</p>
+          <ul> With EcoTrack, you can do so much more.
+              <li>Grade update notifications</li>
+              <li>Predict changes to your grades</li>
+              <li>GPA Calculator</li>
+              <li>Sleek, modern design</li>
+              <li>And so much more</li>
+          </ul>
+          <div class="buttons">
+              <a href="#" class="button">Start Now</a>
+              <a href="#" class="button button-secondary">Watch Our Video</a>
+          </div>
+      </div>
+
+      <!-- Right Section (Image of laptop and phone) -->
+      <div class="right-section">
+          <img src="path/to/your/image.png" alt="Grades tracking app screenshot">
+      </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+      <a href="#">Login</a> • 
+      <p>Don't have an account? <a href="/login">Register here!</a></p> • 
+      <a href="#">Contact</a> • 
+  </footer>
 {% endblock %}
