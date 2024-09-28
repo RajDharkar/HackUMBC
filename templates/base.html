@@ -9,16 +9,30 @@
 
 <body>
     <h1>EcoTrack Registration</h1>
+    
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
     <form action="{{ url_for('register') }}" method="POST">
         <label for="email">Email:</label><br>
-        <input type="email" name="email" id="email" required><br><br>
+        <input type="text" name="email" id="email"><br><br> <!-- No validation -->
+
         <label for="password">Password:</label><br>
-        <input type="password"   name="password" id="password" required><br><br>  
+        <input type="password" name="password" id="password"><br><br> <!-- No validation -->
 
         <label for="confirm">Confirm Password:</label><br>
-        <input type="password" name="confirm" id="confirm" required><br><br>
+        <input type="password" name="confirm" id="confirm"><br><br> <!-- No validation -->
+
         <input type="submit" value="Register">
-    </form>  
+    </form>
 
     {% if works == False %}
     <p>Password validation failed.</p>
