@@ -5,9 +5,17 @@ import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yoursecretkey'  # Required for session management
 
+@app.route('/dashboard', methods=['GET'], methods=["POST"])
+def dashboard():
+    # Transporation
+    transportation = request.form["transportation"]
+    
+    return render_template("dashboard.html")  # Ensure you create dashboard.html in the templates folder
+
 @app.route('/', methods=['GET', 'POST'])
 def register():
-    works = None  # Default to None
+    returnedmessage = None
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -15,16 +23,13 @@ def register():
 
         # Validate email
         if not validate_email(email):
-            flash("Invalid email address", "error")
-            return render_template("index.html", works=works)
-
+            returnedmessage = "Your email is terrible."
         # Validate password
-        if not validate_password(password, confirm):
-            flash("Password validation failed", "error")
+        elif not validate_password(password, confirm):
+            returnedmessage = "Your password is terrible."
         else:
-            works = True
-            print("Password validated successfully")
-
+            # Success message
+            returnedmessage = "Your password is good."
             df1 = pd.DataFrame({'Email': [email], 'Password': [password]})
 
             # Check if the CSV file exists and is not empty
@@ -35,19 +40,20 @@ def register():
 
             # Check if the user already exists
             if email in df2['Email'].values:
-                flash("User already registered", "error")
+                returnedmessage = "You are already registered, why u doing this again :skull:"
             else:
                 # Append new entries
                 result_df = pd.concat([df2, df1], ignore_index=True)
                 result_df.to_csv('data.csv', index=False)
-                flash("User registered successfully!", "success")
+                returnedmessage = "You are finally logged in bruh."
 
-    return render_template("index.html", works=works)
+    return render_template("index.html", returnedmessage=returnedmessage)
 
 def validate_password(password, confirm):
     special_characters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
     numbers = "0123456789"
 
+    # Check for password confirmation and length constraints
     if password != confirm:
         return False
     if len(password) < 8 or len(password) > 15:
@@ -60,6 +66,7 @@ def validate_password(password, confirm):
     return True
 
 def validate_email(email):
+    # Check if the email contains "@" and "."
     return "@" in email and "." in email
 
 if __name__ == '__main__':

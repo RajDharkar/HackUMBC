@@ -9,33 +9,36 @@
 
 <body>
     <h1>EcoTrack Registration</h1>
-    
+
     <!-- Display flash messages -->
-    {% with messages = get_flashed_messages(with_categories=True) %}
-      {% if messages %}
-        <ul>
-          {% for category, message in messages %}
-            <li class="{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% endwith %}
 
     <form action="{{ url_for('register') }}" method="POST">
         <label for="email">Email:</label><br>
-        <input type="text" name="email" id="email"><br><br> <!-- No validation -->
+        <input type="email" name="email" id="email" required><br><br>
 
         <label for="password">Password:</label><br>
-        <input type="password" name="password" id="password"><br><br> <!-- No validation -->
+        <input type="password" name="password" id="password" required><br><br>
 
         <label for="confirm">Confirm Password:</label><br>
-        <input type="password" name="confirm" id="confirm"><br><br> <!-- No validation -->
+        <input type="password" name="confirm" id="confirm" required><br><br>
 
         <input type="submit" value="Register">
     </form>
 
-    {% if works == False %}
-    <p>Password validation failed.</p>
+    {% if returnedmessage %}
+        <p>{{ returnedmessage }}</p>
+        {% if returnedmessage == "You are finally logged in bruh." %}
+            <a href="{{ url_for('dashboard') }}">Go to Dashboard</a>
+        {% endif %}
     {% endif %}
 </body>
 
