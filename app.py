@@ -18,6 +18,7 @@ def dashboard():
 @app.route('/login', methods=['GET', 'POST'])
 def register():
     works = None
+    returnedmessage = None
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -30,7 +31,7 @@ def register():
         elif not validate_password(password, confirm):
             returnedmessage = "Your password is terrible."
         else:
-            # Success message
+            # Success message   
             returnedmessage = "Your password is good."
             df1 = pd.DataFrame({'Email': [email], 'Password': [password]})
 
