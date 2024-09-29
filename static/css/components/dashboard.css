@@ -1,6 +1,7 @@
 body {
     margin-left: 0;
 }
+
 /* Layout styling */
 .dash-cont {
     display: flex;
@@ -56,17 +57,20 @@ body {
 
 /* Card Grid */
 .cards-container {
-    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
 }
+
 
 /* Individual Card */
 .card {
+    flex: 1 1 calc(50% - 20px);
     background-color: var(--clr-white);
     padding: 20px;
     border-radius: 12px;
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
+    text-align: center;
 }
 
 .card h3 {
@@ -77,6 +81,13 @@ body {
 .card canvas {
     max-width: 100%;
 }
+
+canvas {
+    width: 100% !important;
+    height: 300px;
+    /* Set a fixed height for both charts */
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

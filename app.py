@@ -53,6 +53,7 @@ def dashboard(email):
         data = []
 
     bar_graph = [{"x_axis": bar_x_axis}, {"y_data": data}]
+    print(bar_graph)
     return render_template("dashboard.html", pie_data=pie_percent, barChart1=bar_graph)
 
 # Home page >> register.HTML
