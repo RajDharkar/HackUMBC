@@ -55,7 +55,8 @@ def dashboard(email):
         bar_x_axis = [0, 0, 0, 0, 0]
         data = [0, 0, 0, 0, 0]
 
-    bar_graph = [{"x_axis": bar_x_axis}, {"y_data": data}]
+    bar_graph = [{"x_labels": bar_x_axis}, {"y_data": data}]
+    
     print(bar_graph)
     print(pie_percent)
     return render_template("dashboard.html", pieChart1=pie_percent, barChart1=bar_graph)

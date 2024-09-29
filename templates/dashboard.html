@@ -31,22 +31,26 @@
             <div class="card">
                 <h3>Chart 1</h3>
                 <!-- Canvas placeholder for Chart.js -->
-                <canvas id="barchart1"></canvas>
+                <canvas id="barChart1"></canvas>
             </div>
 
             <!-- Card 2: Placeholder for Chart 2 -->
             <div class="card">
                 <h3>Chart 2</h3>
-                <canvas id="chart2"></canvas>
+                <canvas id="pieChart1"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<script id="ChartData" type="application/json">
+<script id="barChartData" type="application/json">
     {{ barChart1 | tojson }}
+</script>
+
+<script id="pieChartData" type="application/json">
     {{ pieChart1 | tojson }}
 </script>
+
 
 <!-- Load Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
