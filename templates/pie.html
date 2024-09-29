@@ -7,13 +7,16 @@
 <script>
   const ctx = document.getElementById('myChart');
 
+  // Use data from Flask
+  const pieData = {{ pie_data | tojson }};  // Converts pie_data into JSON format for JS
+
   new Chart(ctx, {
     type: 'pie',
     data: {
       labels: ['Electric', 'Waste', 'Transportation', 'Food Products', 'Manufacturing'],
       datasets: [{
-        label: 'Carbon Emmision',
-        data: [1, 0.75, 0, 0, 0.5],
+        label: 'Carbon Emission',
+        data: pieData,  // Use the dynamic data passed from Flask
         borderWidth: 1
       }]
     },
@@ -26,4 +29,3 @@
     }
   });
 </script>
- 

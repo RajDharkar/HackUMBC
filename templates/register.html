@@ -34,7 +34,7 @@
         <input type="submit" value="Register">
     </form>
 
-    {% if returnedmessage %}
+    {% if returnedmessage != None %}
         <p>{{ returnedmessage }}</p>
         {% if returnedmessage == "You are finally logged in bruh." %}
             <a href="{{ url_for('dashboard') }}">Go to Dashboard</a>
