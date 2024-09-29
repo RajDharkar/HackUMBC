@@ -45,15 +45,20 @@ def dashboard(email):
 
     # Prepare bar chart data (optional for your case)
     recents = cd[0]['recents']
-    if len(recents) > 0:
+    if len(recents) > 5:
         bar_x_axis = list(recents.keys())[-5:]  # Last 5 keys
         data = list(recents.values())[-5:]  # Last 5 values
+    elif 0 < len(recents) < 5:
+        bar_x_axis = list(recents.keys())
+        data = list(recents.values())
     else:
-        bar_x_axis = []
-        data = []
+        bar_x_axis = [0, 0, 0, 0, 0]
+        data = [0, 0, 0, 0, 0]
 
     bar_graph = [{"x_axis": bar_x_axis}, {"y_data": data}]
-    return render_template("dashboard.html", pie_data=pie_percent, barChart1=bar_graph)
+    print(bar_graph)
+    print(pie_percent)
+    return render_template("dashboard.html", pieChart1=pie_percent, barChart1=bar_graph)
 
 # Home page >> register.HTML
 @app.route('/register', methods=['GET', 'POST'])
@@ -127,35 +132,7 @@ def login():
             return render_template("login.html", returnedmessage='Invalid Username or Password')
 
         elif email in df2['Email'].values:
-            for index, row in df2.iterrows():
-                if row["Email"] == email:
-                    # Compare the hashed password with the one in the CSV
-                    if verify_password(row["Password"], password):
-                        cd = ast.literal_eval(row["Info"])
-                        break
-                    else:
-                        returnedmessage = "Invalid Email or Password"
-                        return render_template("login.html", returnedmessage=returnedmessage)
-
-            # Calculate pie_percent based on 'usage'
-            nums = cd[1]['usage']
-            if nums != [0] * 5:
-                pie_percent = [(num / sum(nums)) * 100 for num in nums]
-            else:
-                pie_percent = [0] * 5  # Default values if no usage data
-
-            # Prepare bar chart data (optional for your case)
-            recents = cd[0]['recents']
-            if len(recents) > 0:
-                bar_x_axis = list(recents.keys())[-5:]  # Last 5 keys
-                data = list(recents.values())[-5:]  # Last 5 values
-
-            # Successful login, render pie.html with calculated pie_percent
-            returnedmessage = "You are successfully logged in!"
             return redirect(url_for('dashboard', email=email))
-
-        else:
-            returnedmessage = "Invalid Email or Password"
 
     return render_template("login.html", returnedmessage=returnedmessage)
 
