@@ -30,3 +30,43 @@ const barChart = new Chart(ctx, {
         }
     }
 });
+
+const pieChartData = JSON.parse(document.getElementById('pieChartData').textContent);
+
+// Extract the labels and data for the pie chart
+const pieLabels = pieChartData[0].labels;
+const pieData = pieChartData[1].data;
+
+// Initialize the pie chart
+const ctxPie = document.getElementById('pieChart').getContext('2d');
+const pieChart = new Chart(ctxPie, {
+    type: 'pie',  // Chart type is pie
+    data: {
+        labels: pieLabels,  // Pie chart labels
+        datasets: [{
+            label: 'Pie Data',
+            data: pieData,  // Pie chart data
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
