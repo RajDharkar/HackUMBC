@@ -38,7 +38,7 @@ const pieLabels = pieChartData[0].labels;
 const pieData = pieChartData[1].data;
 
 // Initialize the pie chart
-const ctxPie = document.getElementById('pieChart').getContext('2d');
+const ctxPie = document.getElementById('pieChart1').getContext('2d');
 const pieChart = new Chart(ctxPie, {
     type: 'pie',  // Chart type is pie
     data: {
@@ -67,6 +67,6 @@ const pieChart = new Chart(ctxPie, {
     },
     options: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: true
     }
 });

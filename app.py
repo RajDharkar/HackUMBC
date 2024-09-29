@@ -56,10 +56,10 @@ def dashboard(email):
         data = [0, 0, 0, 0, 0]
 
     bar_graph = [{"x_labels": bar_x_axis}, {"y_data": data}]
-    
+    pie_graph = [{"labels": ["Transportation", "Electricity", "Waste", "Food Production", "Manufacturing"]}, {"data": pie_percent}]
     print(bar_graph)
     print(pie_percent)
-    return render_template("dashboard.html", pieChart1=pie_percent, barChart1=bar_graph)
+    return render_template("dashboard.html", pieChart1=pie_graph, barChart1=bar_graph)
 
 # Home page >> register.HTML
 @app.route('/register', methods=['GET', 'POST'])
