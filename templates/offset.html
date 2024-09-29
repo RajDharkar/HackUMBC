@@ -1,38 +1,51 @@
 {% extends 'base.html' %}
 
 {% block head %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/components/dashboard.css') }}">
-  <title>EcoTrack: Dashboard</title>
+<title>EcoTrack: Carbon Offset</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/dashboard.css') }}">
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/components/offset.css') }}"> -->
+
 {% endblock %}
 
 {% block body %}
-<div class="dash-cont">
-
-    <!-- Main Content Area -->
-    <div class="main-content">
-        <!-- Header Section -->
-        <div class="dashboard-header">
-            Dashboard
-        </div>
-
-        <!-- Cards Section (Placeholder for charts) -->
-        <div class="cards-container">
-            <!-- Card 1: Placeholder for Chart 1 -->
-            <div class="card">
-                <h3>Chart 1</h3>
-                <!-- Canvas placeholder for Chart.js -->
-                <canvas id="barChart1"></canvas>
-            </div>
-
-            <!-- Card 2: Placeholder for Chart 2 -->
-            <div class="card">
-                <h3>Chart 2</h3>
-                <canvas id="pieChart1"></canvas>
-            </div>
-        </div>
-    </div>
+<!-- Sidebar -->
+<div class="sidebar">
+    <ul>
+        <li class="btn"><a href="/templates/dashboard.html">Dashboard</a></li>
+        <li class="btn"><a href="/templates/dashboard.html">Carbon Footprint</a></li>
+        <li class="btn"><a href="/templates/dashboard.html">Live Leaderboard</a></li>
+        <li class="btn"><a href="/offset">Offset</a></li>
+        <li class="btn"><a href="/templates/dashboard.html">Settings</a></li>
+    </ul>
 </div>
 
-{% endblock %}
+<div class="offset-container">
+    <div class="offset-header">
+        <h1>Carbon Offset: Reduce Your Impact</h1>
+    </div>
 
-</html>
+    <div class="offset-content">
+        <p>Your carbon footprint reflects the greenhouse gases (GHG) you produce through daily activities. Offsetting is
+            an important step in reducing your impact on the environment by supporting projects that remove or reduce
+            GHG emissions. You can make a positive contribution by supporting various carbon offset projects.</p>
+
+        <h2>Explore Carbon Offset Initiatives</h2>
+        <ul>
+            <li>
+                <a href="https://unfccc.int/climate-action/united-nations-carbon-offset-platform#a-versatile-catalogue-of-projects"
+                    target="_blank">UN Carbon Offset Platform</a>: A versatile catalogue of global projects that support
+                efforts in carbon emission reduction.
+            </li>
+            <li>
+                <a href="https://offset.climateneutralnow.org/AllProjects" target="_blank">Climate Neutral Now</a>:
+                Explore verified projects aimed at helping you offset your carbon footprint while contributing to
+                climate neutrality.
+            </li>
+        </ul>
+
+        <p>By participating in these projects, you can take actionable steps to neutralize the effects of your personal
+            or organizational carbon emissions. Start exploring these platforms today to reduce your environmental
+            impact!</p>
+    </div>
+</div>
+{% endblock %}

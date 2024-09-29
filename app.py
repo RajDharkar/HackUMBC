@@ -26,6 +26,10 @@ def verify_password(stored_password, provided_password):
 def homepage():
     return render_template('index.html')
 
+@app.route('/offset')
+def offset():
+    return render_template('offset.html')
+
 @app.route('/dashboard/<email>', methods=['GET', 'POST'])
 def dashboard(email):
     # Not empty and email already in

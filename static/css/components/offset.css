@@ -1,0 +1,42 @@
+
+.offset-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.offset-header {
+    background-color: var(--clr-neon); /* Header background color */
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: var(--size-4xl);
+    margin-bottom: 20px;
+}
+
+.offset-content {
+    background-color: var(--clr-bg); /* White background for the content */
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin-top: 20px;
+}
+
+h1, h2 {
+    color: var(--clr-lime); /* Green color for headings */
+}
+
+a {
+    color: var(--clr-lime); /* Green color for links */
+    text-decoration: none; /* Remove underline */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline on hover for links */
+}
+
+ul {
+    padding-left: 20px; /* Indentation for list items */
+}
