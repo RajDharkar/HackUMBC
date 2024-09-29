@@ -6,64 +6,62 @@ import hashlib
 import binascii
 import ast
 import datetime
+import random
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yoursecretkey'  # Required for session management
 
 
 
 # Function to run the Monte Carlo simulation
+# Monte Carlo simulation function to predict carbon footprint variability for the next 5 days
 def monte_carlo_simulation(email):
-    # Fetch user data (replace this with actual logic from your dataset)
+    # Fetch user data from CSV
     df2 = pd.read_csv("data.csv")
     for index, row in df2.iterrows():
         if row["Email"] == email:
             cd = ast.literal_eval(row["Info"])
             break
     
-    # Input current footprint values from the user's data
-    current_usage = cd[1]['usage']
+    # Input current usage data from the user's info
+    current_usage = cd[1]['usage']  # ['Transportation', 'Electricity', 'Waste', 'Food Production', 'Manufacturing']
+
+    # Constants for Monte Carlo simulation
+    num_simulations = 1000
+    household_size = random.uniform(1, 6)  # Example: household size between 1 and 6
+    miles_per_week = random.uniform(50, 300)  # Miles driven per week
+    annual_kwh = random.uniform(4000, 12000)  # Annual electricity in kWh
+    food_waste_per_week = random.uniform(2, 15)  # Food waste in pounds per week
+    flights_per_year = random.uniform(0, 10)  # Flights per year
     
-    # Define standard deviation for each category to simulate variability
-    std_footprint = {
-        'electricity': 0.2 * current_usage[1],  # 20% variability
-        'transportation': 0.2 * current_usage[0],
-        'waste': 0.2 * current_usage[2],
-        'food_production': 0.2 * current_usage[3],
-        'manufacturing': 0.2 * current_usage[4]
-    }
+    # Base carbon footprint components
+    base_transportation = miles_per_week * 0.404  # Example multiplier
+    base_electricity = annual_kwh * 0.92 / 52  # Convert annual to weekly
+    base_waste = food_waste_per_week * 2.5
+    base_food_production = food_waste_per_week * 1.5
+    base_manufacturing = household_size * 3.0
 
-    # Number of Monte Carlo iterations
-    n_simulations = 1000
+    # Variables to hold the prediction results for the next 5 days
+    future_predictions = []
 
-    # Run Monte Carlo simulation for each category
-    electricity_simulation = np.random.normal(current_usage[1], std_footprint['electricity'], n_simulations)
-    transportation_simulation = np.random.normal(current_usage[0], std_footprint['transportation'], n_simulations)
-    waste_simulation = np.random.normal(current_usage[2], std_footprint['waste'], n_simulations)
-    food_simulation = np.random.normal(current_usage[3], std_footprint['food_production'], n_simulations)
-    manufacturing_simulation = np.random.normal(current_usage[4], std_footprint['manufacturing'], n_simulations)
-
-    # Total carbon footprint simulation
-    total_footprint_simulation = (
-        electricity_simulation +
-        transportation_simulation +
-        waste_simulation +
-        food_simulation +
-        manufacturing_simulation
-    )
-
-    # Compute the mean, std, and 95% confidence interval
-    mean_total_footprint = np.mean(total_footprint_simulation)
-    std_total_footprint = np.std(total_footprint_simulation)
-    confidence_interval = np.percentile(total_footprint_simulation, [2.5, 97.5])
-
-    # Store the results for display on the dashboard
-    results = {
-        'mean': mean_total_footprint,
-        'std': std_total_footprint,
-        'confidence_interval': confidence_interval
-    }
-
-    return results
+    # Run Monte Carlo simulation for the next 5 days
+    for day in range(5):
+        daily_predictions = []
+        for _ in range(num_simulations):
+            transportation = random.gauss(base_transportation, base_transportation * 0.1)  # 10% variability
+            electricity = random.gauss(base_electricity, base_electricity * 0.1)
+            waste = random.gauss(base_waste, base_waste * 0.1)
+            food_production = random.gauss(base_food_production, base_food_production * 0.1)
+            manufacturing = random.gauss(base_manufacturing, base_manufacturing * 0.1)
+            
+            # Total carbon footprint for that simulation
+            total_footprint = transportation + electricity + waste + food_production + manufacturing
+            daily_predictions.append(total_footprint)
+        
+        # Average of the Monte Carlo simulations for that day
+        avg_prediction = np.mean(daily_predictions)
+        future_predictions.append(avg_prediction)
+    print(future_predictions)
+    #return future_predictions
     
 # Function to hash password with salt using SHA-256
 def hash_password_with_salt(password):
@@ -77,9 +75,7 @@ def verify_password(stored_password, provided_password):
     salt = binascii.unhexlify(salt.encode())  # Convert the stored salt back to bytes
     hashed_provided_password = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
     return binascii.hexlify(hashed_provided_password).decode() == hashed_password
-@app.route('/entry', methods=['GET', 'POST'])
-def update():
-    return render_template("entry.html")
+
 # Home Page >> Index.HTML
 @app.route('/')
 def homepage():
@@ -119,29 +115,26 @@ def dashboard(email):
         data = [0, 0, 0, 0, 0]
 
     bar_graph = [{"x_labels": bar_x_axis}, {"y_data": data}]
-    pie_graph = [{"labels": ["Transportation", "Electricity", "Waste", "Food Production", "Manufacturing"]}, {"data": pie_percent}]
+    pie_graph = [{"labels": ["Transportation", "Electricity", "Waste", "Food Production", "Household Members"]}, {"data": pie_percent}]
     print(bar_graph)
-    print(pie_percent)
+    print(pie_graph)
     return render_template("dashboard.html", pieChart1=pie_graph, barChart1=bar_graph)
-def compute_footprint(email):
+@app.route('/entry', methods=['GET', 'POST'])
+def update():
     now = str(datetime.datetime.now())
+    house_members = request.form["household_members"]
+    miles_driver = request.form["miles_driver"]
+    electricity = request.form["annual_electricity"]
+    waste = request.form["food_waste"]
+    plane = request.form["flights_per_year"]
 
-    transportation = request.form["Transportation"]
-    electricity = request.form["Electricity"]
-    waste = request.form["Waste"]
-    food_production = request.form["Food Production"]
-    manufacturing = request.form["Manufacturing"]
-    modes = [transportation, electricity, waste, food_production, manufacturing]
-    df2 = pd.read_csv("data.csv")
-    for index, row in df2.iterrows():
-        if row["Email"] == email:
-            cd = ast.literal_eval(row["Info"])
-            break
+    df = pd.read_cs("data.csv")
+    #for index, row
+    return render_template("entry.html")
+
+
+
     
-    nums = cd[1]["usage"]
-    for i in range(5):
-        cd[1]["usage"][i] = nums[i] + modes[i]
-            
 @app.route('/live_leaderboard', methods=['GET', 'POST'])
 def live_leaderboard(email):
     # Not empty and email already in
@@ -159,80 +152,91 @@ def live_leaderboard(email):
         result.append({"Mode": j, "Usage": i}) 
     sorted_t = sorted({labels : nums for i, j in zip(nums, labels)}, key=lambda x: x["Usage"])
     return sorted_t[2::]
+    
 
-# Home page >> register.HTML
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    # Initilize Returned Message
     returnedmessage = None
 
     if request.method == 'POST':
-        # Assigning variables, From request
-        email = request.form['email']
+        email = request.form['email'].lower()
         password = request.form['password']
         confirm = request.form['confirm']
 
-        # Validate email
+        # Validate email and password
         if not ("@" in email and "." in email):
             returnedmessage = "Your email is invalid."
-        # Validate password
         elif not validate_password(password, confirm):
-            returnedmessage = "Your email and password are invalid."
-
+            returnedmessage = "Your password is invalid."
         else:
-            # Hash the password with salt
+            # Hash the password
             salted_hashed_password = hash_password_with_salt(password)
 
-            # Intilize row for data frame
-            s = "[{'recents': []}, {'usage': [0, 0, 0, 0, 0]}]"
-            df1 = pd.DataFrame({'Email': [email], 'Password': [salted_hashed_password], 'Info': [s]})
+            # New user info to be added to CSV
+            user_info = "[{'recents': []}, {'usage': [0, 0, 0, 0, 0]}]"
+            new_user_data = pd.DataFrame({'Email': [email], 'Password': [salted_hashed_password], 'Info': [user_info]})
 
-            empty = None
             try:
                 df2 = pd.read_csv("data.csv")
+                # Ensure required columns exist in the CSV
+                if set(['Email', 'Password', 'Info']).issubset(df2.columns):
+                    print("File contains required columns.")
+                else:
+                    print("CSV file missing required columns, initializing.")
+                    # Reinitialize the DataFrame with correct columns if missing
+                    df2 = pd.DataFrame(columns=['Email', 'Password', 'Info'])
 
-            except pd.errors.EmptyDataError:
-                empty = True
-            except FileNotFoundError:
-                empty = True
-            if not empty and (email in df2['Email'].values):
+            except (FileNotFoundError, pd.errors.EmptyDataError):
+                print("CSV file not found or empty, initializing.")
+                df2 = pd.DataFrame(columns=['Email', 'Password', 'Info'])  # Initialize new DataFrame if empty or missing
+
+            # Check if the email already exists in the CSV
+            if email in df2['Email'].values:
                 returnedmessage = "You are already registered, please login."
-                
             else:
-                if empty:
-                    df2 = pd.DataFrame(columns=['Email', 'Password', 'Info']) 
-                result_df = pd.concat([df2, df1], ignore_index=True)
-                result_df.to_csv('data.csv', index=False)
+                # Append new user data to the dataframe
+                df2 = pd.concat([df2, new_user_data], ignore_index=True)
+
+                # Save to CSV
+                df2.to_csv('data.csv', index=False)
+
+                # Redirect to dashboard after successful registration
                 return redirect(url_for('dashboard', email=email))
-                # returnedmessage = "Registration successful! You can now log in."
-                
-                #ISHAAN
-                # [{"bar": {"x axis": [], "data": []}, "pie": []}]
+
     return render_template('register.html', returnedmessage=returnedmessage)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     returnedmessage = None
-    pie_percent = []
-    bar_x_axis = []
-    data = []
     
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        empty = None
+        empty = False
         try:
             df2 = pd.read_csv("data.csv")
-
         except pd.errors.EmptyDataError:
             empty = True
         except FileNotFoundError:
             empty = True
 
         if empty:
-            return render_template("login.html", returnedmessage='Invalid Username or Password')
+            df2 = pd.DataFrame(columns=['Email', 'Password', 'Info']) 
+            returnedmessage = 'Invalid Username or Password'
 
         elif email in df2['Email'].values:
-            return redirect(url_for('dashboard', email=email))
+            # Fetch the stored hashed password from the CSV
+            for index, row in df2.iterrows():
+                if row['Email'] == email:
+                    stored_password = row['Password']
+                    break
+
+            # Validate the provided password
+            if verify_password(stored_password, password):
+                return redirect(url_for('dashboard', email=email))
+            else:
+                returnedmessage = 'Invalid Username or Password'
+        else:
+            returnedmessage = 'Invalid Username or Password'
 
     return render_template("login.html", returnedmessage=returnedmessage)
 
