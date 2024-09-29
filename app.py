@@ -6,6 +6,7 @@ import binascii
 import ast
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yoursecretkey'  # Required for session management
+
 # Function to hash password with salt using SHA-256
 def hash_password_with_salt(password):
     salt = os.urandom(16)  # Generate a 16-byte salt
@@ -52,7 +53,7 @@ def dashboard(email):
         data = []
 
     bar_graph = [{"x_axis": bar_x_axis}, {"y_data": data}]
-    return render_template("dashboard.html", pie_data=pie_percent, bar_data=bar_graph)
+    return render_template("dashboard.html", pie_data=pie_percent, barChart1=bar_graph)
 
 # Home page >> register.HTML
 @app.route('/register', methods=['GET', 'POST'])
@@ -151,8 +152,7 @@ def login():
 
             # Successful login, render pie.html with calculated pie_percent
             returnedmessage = "You are successfully logged in!"
-            bar_graph = [{"x_axis": bar_x_axis}, {"y_data": data}]
-            return redirect("dashboard.html", pie_data=pie_percent, bar_data=bar_graph)
+            return redirect(url_for('dashboard', email=email))
 
         else:
             returnedmessage = "Invalid Email or Password"
