@@ -51,7 +51,7 @@ body {
 
 /* Dashboard Header */
 .dashboard-header {
-    font-size: 2.5rem;
+    font-size: var(--size-4xl);
     margin-bottom: 20px;
 }
 

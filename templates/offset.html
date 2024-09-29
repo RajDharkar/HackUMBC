@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components/dashboard.css') }}">
+  <title>EcoTrack: Dashboard</title>
+{% endblock %}
+
+{% block body %}
+<div class="dash-cont">
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Header Section -->
+        <div class="dashboard-header">
+            Dashboard
+        </div>
+
+        <!-- Cards Section (Placeholder for charts) -->
+        <div class="cards-container">
+            <!-- Card 1: Placeholder for Chart 1 -->
+            <div class="card">
+                <h3>Chart 1</h3>
+                <!-- Canvas placeholder for Chart.js -->
+                <canvas id="barChart1"></canvas>
+            </div>
+
+            <!-- Card 2: Placeholder for Chart 2 -->
+            <div class="card">
+                <h3>Chart 2</h3>
+                <canvas id="pieChart1"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+</html>
