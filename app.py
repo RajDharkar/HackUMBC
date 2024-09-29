@@ -22,7 +22,49 @@ def verify_password(stored_password, provided_password):
     hashed_provided_password = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
     return binascii.hexlify(hashed_provided_password).decode() == hashed_password
 
+@app.route('/offset')
+def offset():
+    return render_template('offset.html')
+@app.route('/entry', methods=['GET', 'POST'])
+def entry():
+    returned_message = None  # Message to show after form submission
+    if request.method == 'POST':
+        # Retrieve form data
+        house_members = request.form.get("household_members", type=int)
+        miles_driver = request.form.get("miles_driver", type=float)
+        electricity = request.form.get("annual_electricity", type=float)
+        waste = request.form.get("food_waste", type=float)
+        plane = request.form.get("flights_per_year", type=float)
 
+        # Validate inputs
+        if (house_members is None or miles_driver is None or 
+            electricity is None or waste is None or plane is None):
+            returned_message = "Please fill in all fields."
+        else:
+            # Prepare data to append to CSV
+            new_data = {
+                "Household Members": house_members,
+                "Miles Driven": miles_driver,
+                "Annual Electricity": electricity,
+                "Food Waste": waste,
+                "Flights per Year": plane
+            }
+            
+            # Convert to DataFrame
+            df_new = pd.DataFrame([new_data])
+
+            # Append to existing CSV file
+            try:
+                df_existing = pd.read_csv("ctrl.csv")
+                df_combined = pd.concat([df_existing, df_new], ignore_index=True)
+            except (FileNotFoundError, pd.errors.EmptyDataError):
+                df_combined = df_new  # If file doesn't exist, create new DataFrame
+
+            df_combined.to_csv("ctrl.csv", index=False)  # Save back to CSV
+            
+            returned_message = "Data submitted successfully!"
+
+    return render_template('entry.html', returned_message=returned_message)
 # Home Page >> Index.HTML
 @app.route('/')
 def homepage():
