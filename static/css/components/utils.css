@@ -17,10 +17,6 @@ extra large viewport
 @media (min-width: 1536px) {} */
 
 
-
-
-
-
 .btn {
     display: inline-block;
     font-weight: 600;
@@ -37,6 +33,8 @@ extra large viewport
 .btn:hover {
     transform: translateY(-3px);
     background-color: var(--clr-neon);
+    color: var(--clr-green700);
+    color: var();
     /* box-shadow: 0 14px 28px rgba(225, 29, 72, 0.25), 0 10px 10px rgba(225, 29, 72, 0.22), 0 0 120px -10px var(--clr-rose); */
 }
 

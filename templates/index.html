@@ -1,45 +1,49 @@
 {% extends 'base.html' %}
 
 {% block head %}
-  <title>EcoTrack</title>
+<title>EcoTrack</title>
 {% endblock %}
 
 {% block body %}
 
-    <!-- Main Front Page -->
-    <div class="container">
-      
-      <!-- Left Section -->
-      <div class="left-section">
-          <h1>Take the next <strong>STEP</strong>,</h1>
-          <h1>to leave less behind.</h1>
-          <p>Managing your carbon-footprint has never been easier.</p>
-          <ul> By following these steps, anyone can record their journey to save the planet:
-              <li class = "numberedList">Create an Account(Skip if you already have one).</li>
-              <li class = "numberedList">Log in to your account.</li>
-              <li class = "numberedList">Once in your dashaboard</li>
-              <li class = "numberedList">Sleek, modern design</li>
-              <li class = "numberedList">And so much more</li>
-          </ul>
-          <div class="buttons">
-              <a href="#" class="button">Start Now</a>
-              <a href="#" class="button button-secondary">Watch Our Video</a>
-          </div>
-      </div>
+<!-- Main Front Page -->
+<div class="container banner">
+        <h1>Welcome to EcoTrack!</h1>
 
-      <!-- Right Section (Image of laptop and phone) -->
-      <div class="right-section">
-          <img src="path/to/your/image.png" alt="tree image">
-      </div>
+        <!-- Left Section -->
+  <div class="left-section">
+    <h1>Take the next <strong>STEP</strong>,</h1>
+    <h1>to leave less behind.</h1>
+    <p>Managing your carbon-footprint has never been easier.<br>We're helping you track your carbon footprint to make a difference in the world.</p>
+    <ul>By following these steps, anyone can record their journey to save the planet:
+      <li class="numberedList">Create an Account(Skip if you already have one).</li>
+      <li class="numberedList">Log in to your account.</li>
+      <li class="numberedList">Visit your Dashboard</li>
+      <li class="numberedList">Take the carbon-footprint survey</li>
+      <li class="numberedList">And view your carbon-footprint and effective measures to minimize it!</li>
+    </ul>
+    <div class="buttons">
+      <a href="/register" class="button btn btn-primary">Get Started</a>
+      <a href="/login" class="button btn btn-secondary">Log in</a>
+    </div>
   </div>
 
-  <!-- Footer -->
-  <footer>
-    <nav>
-        <a href="/login">Login</a> • 
-        <span>Don't have an account? <a href="/register">Register here</a></span> • 
-        <a href="mailto:ecotrack@yourcompany.com?subject=Contact Us&body=Please provide details about your query.">Contact Us</a> • 
-        <a href="/dashboard">Dashboard</a>
-    </nav>
+  <!-- Right Section (Image of laptop and phone) -->
+  <div class="right-section">
+    <img src="static/imgs/treeImg.png" alt="tree image">
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <nav class="">
+    <div class="footer-container container">
+      <a href="/login">Login</a> •
+      <span>Don't have an account? <a href="/register">Register here</a></span> •
+      <a href="mailto:ecotrack@gmail.com?subject=Contact Us&body=Please provide details about your query.">Contact
+        Us</a> •
+      <a href="/dashboard">Dashboard</a>•
+    </div>
+  </nav>
 </footer>
 {% endblock %}

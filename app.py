@@ -88,7 +88,9 @@ def homepage():
 @app.route('/offset')
 def offset():
     return render_template('offset.html')
-
+@app.route('/dashboard')
+def dash():
+    return render_template('dashboard.html')
 @app.route('/dashboard/<email>', methods=['GET', 'POST'])
 def dashboard(email):
     # Not empty and email already in

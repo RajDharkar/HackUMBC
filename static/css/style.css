@@ -7,6 +7,7 @@
     --clr-green500: #22c55e;
     --clr-green600: #16a34a;
     --clr-green700: #15803d;
+    --clr-grey: #404040;
 
     --clr-sky: #0c4a6e;
     --clr-emerald: #047857;
@@ -81,9 +82,10 @@ button {
 }
 
 a {
-    color: var(--clr-sky);
-
+    color: #1d4ed8; 
 }
+
+
 
 strong {
     font-size: 1.5em;
@@ -103,6 +105,13 @@ navbar-logo {
     animation-iteration-count: 1;
 }
 
-footer {
-    align-items: center;
+.footer-container {
+    display: flex;
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    flex-direction: column;
+    text-align: center;
+    font-size: var(--size-xl);
 }
+
