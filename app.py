@@ -1,12 +1,70 @@
 from flask import Flask, redirect, render_template, request, flash, url_for
+import numpy as np
 import pandas as pd
 import os
 import hashlib
 import binascii
 import ast
+import datetime
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yoursecretkey'  # Required for session management
 
+
+
+# Function to run the Monte Carlo simulation
+def monte_carlo_simulation(email):
+    # Fetch user data (replace this with actual logic from your dataset)
+    df2 = pd.read_csv("data.csv")
+    for index, row in df2.iterrows():
+        if row["Email"] == email:
+            cd = ast.literal_eval(row["Info"])
+            break
+    
+    # Input current footprint values from the user's data
+    current_usage = cd[1]['usage']
+    
+    # Define standard deviation for each category to simulate variability
+    std_footprint = {
+        'electricity': 0.2 * current_usage[1],  # 20% variability
+        'transportation': 0.2 * current_usage[0],
+        'waste': 0.2 * current_usage[2],
+        'food_production': 0.2 * current_usage[3],
+        'manufacturing': 0.2 * current_usage[4]
+    }
+
+    # Number of Monte Carlo iterations
+    n_simulations = 1000
+
+    # Run Monte Carlo simulation for each category
+    electricity_simulation = np.random.normal(current_usage[1], std_footprint['electricity'], n_simulations)
+    transportation_simulation = np.random.normal(current_usage[0], std_footprint['transportation'], n_simulations)
+    waste_simulation = np.random.normal(current_usage[2], std_footprint['waste'], n_simulations)
+    food_simulation = np.random.normal(current_usage[3], std_footprint['food_production'], n_simulations)
+    manufacturing_simulation = np.random.normal(current_usage[4], std_footprint['manufacturing'], n_simulations)
+
+    # Total carbon footprint simulation
+    total_footprint_simulation = (
+        electricity_simulation +
+        transportation_simulation +
+        waste_simulation +
+        food_simulation +
+        manufacturing_simulation
+    )
+
+    # Compute the mean, std, and 95% confidence interval
+    mean_total_footprint = np.mean(total_footprint_simulation)
+    std_total_footprint = np.std(total_footprint_simulation)
+    confidence_interval = np.percentile(total_footprint_simulation, [2.5, 97.5])
+
+    # Store the results for display on the dashboard
+    results = {
+        'mean': mean_total_footprint,
+        'std': std_total_footprint,
+        'confidence_interval': confidence_interval
+    }
+
+    return results
+    
 # Function to hash password with salt using SHA-256
 def hash_password_with_salt(password):
     salt = os.urandom(16)  # Generate a 16-byte salt
@@ -19,7 +77,13 @@ def verify_password(stored_password, provided_password):
     salt = binascii.unhexlify(salt.encode())  # Convert the stored salt back to bytes
     hashed_provided_password = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
     return binascii.hexlify(hashed_provided_password).decode() == hashed_password
-
+@app.route('/entry', methods=['GET', 'POST'])
+def update():
+    house_hold_members = request.form["household_members"]
+    miles_driver = request.form["miles_driven"]
+    anual_electricity = request.form["annual_electricity"]
+    waste = request.form["food_waste"]
+    flights_per_year = request.form["flights_per_year"]
 
 # Home Page >> Index.HTML
 @app.route('/')
@@ -64,6 +128,42 @@ def dashboard(email):
     print(bar_graph)
     print(pie_percent)
     return render_template("dashboard.html", pieChart1=pie_graph, barChart1=bar_graph)
+def compute_footprint(email):
+    now = str(datetime.datetime.now())
+
+    transportation = request.form["Transportation"]
+    electricity = request.form["Electricity"]
+    waste = request.form["Waste"]
+    food_production = request.form["Food Production"]
+    manufacturing = request.form["Manufacturing"]
+    modes = [transportation, electricity, waste, food_production, manufacturing]
+    df2 = pd.read_csv("data.csv")
+    for index, row in df2.iterrows():
+        if row["Email"] == email:
+            cd = ast.literal_eval(row["Info"])
+            break
+    
+    nums = cd[1]["usage"]
+    for i in range(5):
+        cd[1]["usage"][i] = nums[i] + modes[i]
+            
+@app.route('/live_leaderboard', methods=['GET', 'POST'])
+def live_leaderboard(email):
+    # Not empty and email already in
+    df2 = pd.read_csv("data.csv")
+    print(email)
+    for index, row in df2.iterrows():
+        if row["Email"] == email:
+            cd = ast.literal_eval(row["Info"])
+            break
+    
+    nums = cd[1]['usage']
+    labels = ["Transportation", "Electricity", "Waste", "Food Production", "Manufacturing"]
+    result = []
+    for i, j in zip(nums, labels):
+        result.append({"Mode": j, "Usage": i}) 
+    sorted_t = sorted({labels : nums for i, j in zip(nums, labels)}, key=lambda x: x["Usage"])
+    return sorted_t[2::]
 
 # Home page >> register.HTML
 @app.route('/register', methods=['GET', 'POST'])
@@ -81,11 +181,8 @@ def register():
         if not ("@" in email and "." in email):
             returnedmessage = "Your email is invalid."
         # Validate password
-        elif not validate_password(password, confirm) and returnedmessage == None:
+        elif not validate_password(password, confirm):
             returnedmessage = "Your email and password are invalid."
-
-        elif not validate_password(password, confirm) and returnedmessage != None: 
-            returnedmessage = "Your password is invalid."
 
         else:
             # Hash the password with salt
@@ -101,7 +198,8 @@ def register():
 
             except pd.errors.EmptyDataError:
                 empty = True
-
+            except FileNotFoundError:
+                empty = True
             if not empty and (email in df2['Email'].values):
                 returnedmessage = "You are already registered, please login."
                 
@@ -131,6 +229,8 @@ def login():
             df2 = pd.read_csv("data.csv")
 
         except pd.errors.EmptyDataError:
+            empty = True
+        except FileNotFoundError:
             empty = True
 
         if empty:

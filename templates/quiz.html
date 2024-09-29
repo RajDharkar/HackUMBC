@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/dashboard.css') }}">
+    <title>Carbon Footprint Quiz</title>
+</head>
+<body>
+
+<h1>Carbon Footprint Quiz</h1>
+
+<form id="quizForm" action="{{ url_for('update') }}" method="POST">
+    <div class="question">
+        <label for="question1">How many people live in your household?</label>
+        <input type="range" id="question1" name="household_members" class="slider" min="1" max="10" value="3" step="1" oninput="updateValue(this)">
+        <div class="value">Value: <span id="value1">3</span></div>
+    </div>
+
+    <div class="question">
+        <label for="question2">How many miles do you drive per week?</label>
+        <input type="range" id="question2" name="miles_driven" class="slider" min="0" max="500" value="100" step="10" oninput="updateValue(this)">
+        <div class="value">Value: <span id="value2">100</span></div>
+    </div>
+
+    <div class="question">
+        <label for="question3">What is your annual electricity use (in kWh)?</label>
+        <input type="range" id="question3" name="annual_electricity" class="slider" min="0" max="20000" value="10000" step="1000" oninput="updateValue(this)">
+        <div class="value">Value: <span id="value3">10000</span></div>
+    </div>
+
+    <div class="question">
+        <label for="question4">How much food do you waste per week (in lbs)?</label>
+        <input type="range" id="question4" name="food_waste" class="slider" min="0" max="50" value="10" step="1" oninput="updateValue(this)">
+        <div class="value">Value: <span id="value4">10</span></div>
+    </div>
+
+    <div class="question">
+        <label for="question5">How often do you fly per year?</label>
+        <input type="range" id="question5" name="flights_per_year" class="slider" min="0" max="10" value="1" step="1" oninput="updateValue(this)">
+        <div class="value">Value: <span id="value5">1</span></div>
+    </div>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    function updateValue(slider) {
+        document.getElementById("value" + slider.id.charAt(slider.id.length - 1)).innerText = slider.value;
+    }
+</script>
+
+</body>
+</html>
