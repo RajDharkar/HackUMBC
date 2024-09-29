@@ -48,7 +48,7 @@ body {
     font-family: 'Public Sans', sans-serif;
     background-color: var(--clr-light);
     color: var(--clr-dark);
-    margin-left: var(--size-2xl);
+    margin-left: 0;
 }
 
 green-bg {
@@ -100,4 +100,8 @@ navbar-logo {
     -moz-animation-iteration-count: 1;
     -o-animation-iteration-count: 1;
     animation-iteration-count: 1;
+}
+
+footer {
+    
 }
