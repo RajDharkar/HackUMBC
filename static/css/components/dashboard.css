@@ -17,6 +17,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 100%;
+    flex-shrink: 0;
 }
 
 .sidebar ul {
@@ -42,12 +44,13 @@ body {
 
 /* Main Content Styling */
 .main-content {
-    flex: 1;
+    flex: 1;                 /* This ensures that the main content takes up the remaining space */
     padding: 20px;
-    overflow-y: auto;
+    overflow-y: auto;        /* Allows scrolling for content if it's taller than the viewport */
     display: flex;
     flex-direction: column;
 }
+
 
 /* Dashboard Header */
 .dashboard-header {
@@ -92,8 +95,11 @@ canvas {
 /* Responsive Design */
 @media (max-width: 768px) {
     .dash-cont {
-        flex-direction: column;
+        display: flex;           /* Ensure the sidebar and content are aligned side by side */
+        height: 100vh;           /* Make the container fill the full viewport height */
+        overflow: hidden;        /* Avoid overflow issues */
     }
+    
 
     .sidebar {
         width: 100%;
@@ -107,4 +113,10 @@ canvas {
     .cards-container {
         grid-template-columns: 1fr;
     }
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
