@@ -1,18 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" href="static\imgs\favicon_io\favicon-16x16.png" type="image/png">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-        {% block head %}{% endblock %}
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="static\imgs\favicon_io\favicon-16x16.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://api.fontshare.com/v2/css?f[]=public-sans@500,600,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/utils.css') }}">
+</head>
 
-    <body id = "#page-top">
-        {% block body %}{% endblock %}
-        <script type="module" src="src/main.js"></script>
-    </body>
+<body id="#page-top">
+    <!-- Navigation -->
+    <nav class = "navbar">
+        <div class="container">
+            <a class="" href="#page-top"><img src="static\imgs\EcoTrackLogo.gif" alt="..." class="navbar-logo" /></a>
+        </div>
+    </nav>
+
+    {% block body %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
 
 </html>

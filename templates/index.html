@@ -1,31 +1,25 @@
 {% extends 'base.html' %}
 
 {% block head %}
-  <title>Eco Track</title>
-  <link href="https://api.fontshare.com/v2/css?f[]=public-sans@500,600,700&display=swap" rel="stylesheet">
+  <title>EcoTrack</title>
 {% endblock %}
 
 {% block body %}
-    <!-- Navigation -->
-    <nav>
-      <div class="container">
-        <a class="navbar-brand" href="#page-top"><img src="static\imgs\EcoTrackLogo.png" alt="..." class = "navbar-logo"/></a>
-      </div>
-    </nav>
-    
+
     <!-- Main Front Page -->
     <div class="container">
+      
       <!-- Left Section -->
       <div class="left-section">
           <h1>Take the next <strong>STEP</strong>,</h1>
           <h1>to leave less behind.</h1>
           <p>Managing your carbon-footprint has never been easier.</p>
-          <ul> With EcoTrack, you can do so much more.
-              <li>Grade update notifications</li>
-              <li>Predict changes to your grades</li>
-              <li>GPA Calculator</li>
-              <li>Sleek, modern design</li>
-              <li>And so much more</li>
+          <ul> By following these steps, anyone can record their journey to save the planet:
+              <li class = "numberedList">Create an Account(Skip if you already have one).</li>
+              <li class = "numberedList">Log in to your account.</li>
+              <li class = "numberedList">Once in your dashaboard</li>
+              <li class = "numberedList">Sleek, modern design</li>
+              <li class = "numberedList">And so much more</li>
           </ul>
           <div class="buttons">
               <a href="#" class="button">Start Now</a>
@@ -35,14 +29,17 @@
 
       <!-- Right Section (Image of laptop and phone) -->
       <div class="right-section">
-          <img src="path/to/your/image.png" alt="Grades tracking app screenshot">
+          <img src="path/to/your/image.png" alt="tree image">
       </div>
   </div>
 
   <!-- Footer -->
   <footer>
-      <a href="#">Login</a> • 
-      <p>Don't have an account? <a href="/login">Register here!</a></p> • 
-      <a href="#">Contact</a> • 
-  </footer>
+    <nav>
+        <a href="login.html">Login</a> • 
+        <span>Don't have an account? <a href="register.html">Register here</a></span> • 
+        <a href="mailto:info@yourcompany.com?subject=Contact Us&body=Please provide details about your query.">Contact Us</a> • 
+        <a href="/dashboard">Dashboard</a>
+    </nav>
+</footer>
 {% endblock %}
