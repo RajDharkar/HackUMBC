@@ -58,7 +58,7 @@ green-bg {
 
 h1 {
     font-size: var(--size-8xl);
-    color: var(--clr-green600);
+    color: var(--clr-emerald);
     text-shadow: 0.25rem 0.25rem 0px rgba(21, 128, 61, 0.5);
 }
 
@@ -89,7 +89,7 @@ a {
 
 strong {
     font-size: 1.5em;
-    color: var(--clr-emerald)
+    color: var(--clr-green600)
 }
 
 nav {
@@ -103,6 +103,86 @@ navbar-logo {
     -moz-animation-iteration-count: 1;
     -o-animation-iteration-count: 1;
     animation-iteration-count: 1;
+}
+
+.two-column-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    padding-left: 40px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: var(--clr-sky);
+    color: var(--clr-white);
+    border-radius: 8px;
+}
+
+.left-column {
+    flex: 1;
+    padding-right: 20px;
+    padding-left: 40px;
+}
+
+.right-column {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-column img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.left-column h2 {
+    font-size: var(--size-4xl);
+    margin-bottom: 20px;
+}
+
+.left-column p {
+    font-size: var(--size-2xl);
+    margin-bottom: 20px;
+}
+
+.left-column ul {
+    font-size: var(--size-2xl);
+    list-style-type: style type num;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.left-column li {
+    margin-bottom: 10px;
+    font-size: var(--size-2xl);
+}
+
+.left-column .button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--clr-green600);
+    color: var(--clr-white);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.left-column .button:hover {
+    background-color: var(--clr-green700);
+}
+
+.right-column img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    transform: scale(1.2); /* Scale the image to 120% of its original size */
+    transition: transform 0.3s ease-in-out; /* Smooth transition */
+}
+
+.right-column img:hover {
+    transform: scale(1.3); /* Increase scale on hover (optional) */
 }
 
 .footer-container {
