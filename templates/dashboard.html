@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block head %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/components/dashboard.css') }}">
-  <title>EcoTrack: Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/dashboard.css') }}">
+<title>EcoTrack: Dashboard</title>
 {% endblock %}
 
 {% block body %}
@@ -10,11 +10,11 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <ul>
-            <li class = "btn"><a href="/templates/dashboard.html">Dashboard</a></li>
-            <li class = "btn"><a href="/templates/dashboard.html">Carbon Footprint</a></li>
-            <li class = "btn"><a href="/templates/dashboard.html">Live Leaderboard</a></li>
-            <li class = "btn"><a href="/offset">Offset</a></li>
-            <li class = "btn"><a href="/templates/dashboard.html">Settings</a></li>
+            <li class="btn"><a href="/dashboard">Dashboard</a></li>
+            <li class="btn"><a href="/entry">Carbon Footprint</a></li>
+            <li class="btn"><a href="/templates/dashboard.html">Live Leaderboard</a></li>
+            <li class="btn"><a href="/offset">Offset</a></li>
+            <li class="btn"><a href="/templates/dashboard.html">Settings</a></li>
         </ul>
     </div>
 
@@ -27,21 +27,25 @@
 
         <!-- Cards Section (Placeholder for charts) -->
         <div class="cards-container">
-            <!-- Card 1: Placeholder for Chart 1 -->
-            <div class="card">
-                <h3>Carbon-Footprint History</h3>
-                <!-- Canvas placeholder for Chart.js -->
+            <div class="card card-bar-chart">
+                <h3>Bar Chart of</h3>
+                <h2>Carbon-Footprint History</h2>
                 <canvas id="barChart1"></canvas>
-                <br>
-                <h4>This bar graph shows your past carbon-footprint survey results and displays your impact on the earth overtime.</h4>
+                <h4>This bar graph shows your past carbon-footprint survey results and displays your impact on the earth
+                    over time.</h4>
             </div>
-
-            <!-- Card 2: Placeholder for Chart 2 -->
-            <div class="card">
-                <h3>Carbon-Footprint Distribution</h3>
+            <div class="card card-line-chart">
+                <h3>Line Chart of</h3>
+                <h2>Predicted Carbon-Footprint</h2>
+                <canvas id="lineChart"></canvas>
+                <h4>This line chart provides a forecast of your carbon footprint based on past behavior.</h4>
+            </div>
+            <div class="card card-pie-chart">
+                <h3>Pie Chart of</h3>
+                <h2>Carbon-Footprint Distribution</h2>
                 <canvas id="pieChart1"></canvas>
-                <br>
-                <h4>This pie chart shows the distribution of your carbon-footprint. Attempt to lower the greenhouse gases you emmit by using these percent(%) estimates* as insight.</h4>
+                <h4>This pie chart shows the distribution of your carbon footprint. Use these percentages to focus on areas
+                    for improvement.</h4>
             </div>
         </div>
     </div>
@@ -55,7 +59,6 @@
     {{ pieChart1 | tojson }}
 </script>
 
-
 <!-- Load Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -63,5 +66,3 @@
 <script src="{{ url_for('static', filename='src/dashboard.js') }}"></script>
 
 {% endblock %}
-
-</html>

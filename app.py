@@ -79,12 +79,7 @@ def verify_password(stored_password, provided_password):
     return binascii.hexlify(hashed_provided_password).decode() == hashed_password
 @app.route('/entry', methods=['GET', 'POST'])
 def update():
-    house_hold_members = request.form["household_members"]
-    miles_driver = request.form["miles_driven"]
-    anual_electricity = request.form["annual_electricity"]
-    waste = request.form["food_waste"]
-    flights_per_year = request.form["flights_per_year"]
-
+    return render_template("entry.html")
 # Home Page >> Index.HTML
 @app.route('/')
 def homepage():
