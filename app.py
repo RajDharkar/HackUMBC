@@ -1,13 +1,11 @@
-from flask import Flask, render_template, request, flash
+from flask import Flask, redirect, render_template, request, flash, url_for
 import pandas as pd
 import os
 import hashlib
 import binascii
 import ast
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yoursecretkey'  # Required for session management
-
 # Function to hash password with salt using SHA-256
 def hash_password_with_salt(password):
     salt = os.urandom(16)  # Generate a 16-byte salt
@@ -27,17 +25,34 @@ def verify_password(stored_password, provided_password):
 def homepage():
     return render_template('index.html')
 
-@app.route('/dashboard', methods=['GET', 'POST'])
-def dashboard():
-    return render_template("dashboard.html")
+@app.route('/dashboard/<email>', methods=['GET', 'POST'])
+def dashboard(email):
+    # Not empty and email already in
+    df2 = pd.read_csv("data.csv")
+    print(email)
+    for index, row in df2.iterrows():
+        if row["Email"] == email:
+            cd = ast.literal_eval(row["Info"])
+            break
 
-# Pie Chart
-@app.route('/pie_chart')
-def pie_chart():
-    # Assuming pie_percent has been calculated from the previous logic
-    pie_percent = [1, 0.75, 0, 0, 0.5]  # Use dynamic values here
+    # Calculate pie_percent based on 'usage'
+    nums = cd[1]['usage']
+    if nums != [0] * 5:
+        pie_percent = [(num / sum(nums)) * 100 for num in nums]
+    else:
+        pie_percent = [0] * 5  # Default values if no usage data
 
-    return render_template("pie.html", pie_data=pie_percent)
+    # Prepare bar chart data (optional for your case)
+    recents = cd[0]['recents']
+    if len(recents) > 0:
+        bar_x_axis = list(recents.keys())[-5:]  # Last 5 keys
+        data = list(recents.values())[-5:]  # Last 5 values
+    else:
+        bar_x_axis = []
+        data = []
+
+    bar_graph = [{"x_axis": bar_x_axis}, {"y_data": data}]
+    return render_template("dashboard.html", pie_data=pie_percent, bar_data=bar_graph)
 
 # Home page >> register.HTML
 @app.route('/register', methods=['GET', 'POST'])
@@ -69,22 +84,27 @@ def register():
             s = "[{'recents': []}, {'usage': [0, 0, 0, 0, 0]}]"
             df1 = pd.DataFrame({'Email': [email], 'Password': [salted_hashed_password], 'Info': [s]})
 
-            # Check If empty using check_csv
-            empty, df2 = check_csv("data.csv")
+            empty = None
+            try:
+                df2 = pd.read_csv("data.csv")
+
+            except pd.errors.EmptyDataError:
+                empty = True
+
             if not empty and (email in df2['Email'].values):
                 returnedmessage = "You are already registered, please login."
-
+                
             else:
                 if empty:
                     df2 = pd.DataFrame(columns=['Email', 'Password', 'Info']) 
                 result_df = pd.concat([df2, df1], ignore_index=True)
                 result_df.to_csv('data.csv', index=False)
-                returnedmessage = "Registration successful! You can now log in."
+                return redirect(url_for('dashboard', email=email))
+                # returnedmessage = "Registration successful! You can now log in."
+                
                 #ISHAAN
-                [{"bar": {"x axis": [], "data": []}, "pie": []}]
-        
-    return render_template("register.html", returnedmessage=returnedmessage)
-
+                # [{"bar": {"x axis": [], "data": []}, "pie": []}]
+    return render_template('register.html', returnedmessage=returnedmessage)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     returnedmessage = None
@@ -95,8 +115,12 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        empty = None
+        try:
+            df2 = pd.read_csv("data.csv")
 
-        empty, df2 = check_csv("data.csv")
+        except pd.errors.EmptyDataError:
+            empty = True
 
         if empty:
             return render_template("login.html", returnedmessage='Invalid Username or Password')
@@ -127,7 +151,8 @@ def login():
 
             # Successful login, render pie.html with calculated pie_percent
             returnedmessage = "You are successfully logged in!"
-            return render_template("pie.html", pie_data=pie_percent)
+            bar_graph = [{"x_axis": bar_x_axis}, {"y_data": data}]
+            return redirect("dashboard.html", pie_data=pie_percent, bar_data=bar_graph)
 
         else:
             returnedmessage = "Invalid Email or Password"
@@ -154,16 +179,6 @@ def validate_password(password, confirm):
         return False
     
     return True
-
-# Check if csv file is empty
-def check_csv(path_name):
-    empty = None
-    try:
-        df2 = pd.read_csv(path_name)
-
-    except pd.errors.EmptyDataError:
-        empty = True
-    return (empty, df2)
 
 if __name__ == '__main__':
     app.run(debug=True)
