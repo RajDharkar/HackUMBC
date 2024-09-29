@@ -31,7 +31,7 @@
             <div class="card">
                 <h3>Chart 1</h3>
                 <!-- Canvas placeholder for Chart.js -->
-                <canvas id="chart1"></canvas>
+                <canvas id="barchart1"></canvas>
             </div>
 
             <!-- Card 2: Placeholder for Chart 2 -->
@@ -42,7 +42,16 @@
         </div>
     </div>
 </div>
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+<script id="barChartData" type="application/json">
+    {{ barChart1 | tojson }}
+</script>
+
+<!-- Load Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Load your external JS file -->
+<script src="{{ url_for('static', filename='src/dashboard.js') }}"></script>
 
 {% endblock %}
 
