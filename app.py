@@ -145,13 +145,7 @@ def verify_password(stored_password, provided_password):
     salt = binascii.unhexlify(salt.encode())  # Convert the stored salt back to bytes
     hashed_provided_password = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
     return binascii.hexlify(hashed_provided_password).decode() == hashed_password
-@app.route('/entry', methods=['GET', 'POST'])
-def update():
-    return render_template("entry.html")
 # Home Page >> Index.HTML
-@app.route('/')
-def homepage():
-    return render_template('index.html')
 
 @app.route('/offset')
 def offset():
