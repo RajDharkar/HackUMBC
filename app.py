@@ -147,9 +147,6 @@ def verify_password(stored_password, provided_password):
     return binascii.hexlify(hashed_provided_password).decode() == hashed_password
 # Home Page >> Index.HTML
 
-@app.route('/offset')
-def offset():
-    return render_template('offset.html')
 @app.route('/dashboard')
 def dash():
     return render_template('dashboard.html')
