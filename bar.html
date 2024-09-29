@@ -1,0 +1,29 @@
+<div>
+    <canvas id="myChart"></canvas>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script>
+    const ctx = document.getElementById('myChart');
+  
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['9.14.24', '9.20.24', '9.21.24', '9.22.24', '9.29.24', '9.29.24'],
+        datasets: [{
+          label: 'Recent Tests',
+          data: [4, 10, 2, 4, 6],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+   
