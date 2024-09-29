@@ -33,9 +33,6 @@
 
     {% if returnedmessage %}
         <p>{{ returnedmessage }}</p>
-        {% if returnedmessage == "You are finally logged in bruh." %}
-            <a href="{{ url_for('dashboard') }}">Go to Dashboard</a>
-        {% endif %}
     {% endif %}
 </body>
 
