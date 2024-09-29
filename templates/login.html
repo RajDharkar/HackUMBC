@@ -21,20 +21,17 @@
         {% endif %}
     {% endwith %}
 
-    <form action="{{ url_for('register') }}" method="POST">
+    <form action="{{ url_for('login') }}" method="POST">
         <label for="email">Email:</label><br>
-        <input type="email" name="email" id="email" required><br><br>
+        <input type="email" name="email" id="email"><br><br>
 
         <label for="password">Password:</label><br>
-        <input type="password" name="password" id="password" required><br><br>
+        <input type="password" name="password" id="password"><br><br>
 
-        <label for="confirm">Confirm Password:</label><br>
-        <input type="password" name="confirm" id="confirm" required><br><br>
-
-        <input type="submit" value="Register">
+        <input type="submit" value="Login">
     </form>
 
-    {% if returnedmessage != None %}
+    {% if returnedmessage %}
         <p>{{ returnedmessage }}</p>
         {% if returnedmessage == "You are finally logged in bruh." %}
             <a href="{{ url_for('dashboard') }}">Go to Dashboard</a>

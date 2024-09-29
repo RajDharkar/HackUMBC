@@ -1,91 +1,169 @@
 from flask import Flask, render_template, request, flash
 import pandas as pd
 import os
+import hashlib
+import binascii
+import ast
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yoursecretkey'  # Required for session management
 
+# Function to hash password with salt using SHA-256
+def hash_password_with_salt(password):
+    salt = os.urandom(16)  # Generate a 16-byte salt
+    salted_password = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
+    return binascii.hexlify(salt).decode() + ":" + binascii.hexlify(salted_password).decode()
+
+# Function to verify if a given password matches the stored password hash
+def verify_password(stored_password, provided_password):
+    salt, hashed_password = stored_password.split(":")
+    salt = binascii.unhexlify(salt.encode())  # Convert the stored salt back to bytes
+    hashed_provided_password = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
+    return binascii.hexlify(hashed_provided_password).decode() == hashed_password
+
+
+# Home Page >> Index.HTML
 @app.route('/')
 def homepage():
     return render_template('index.html')
+
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    # # Transporation
-    # transportation = request.form["transportation"]
-    
-    return render_template("dashboard.html")  # Ensure you create dashboard.html in the templates folder
+    return render_template("dashboard.html")
 
-@app.route('/login', methods=['GET', 'POST'])
+# Pie Chart
+@app.route('/pie_chart')
+def pie_chart():
+    # Assuming pie_percent has been calculated from the previous logic
+    pie_percent = [1, 0.75, 0, 0, 0.5]  # Use dynamic values here
+
+    return render_template("pie.html", pie_data=pie_percent)
+
+# Home page >> register.HTML
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    works = None
+    # Initilize Returned Message
     returnedmessage = None
+
     if request.method == 'POST':
+        # Assigning variables, From request
         email = request.form['email']
         password = request.form['password']
         confirm = request.form['confirm']
 
         # Validate email
-        if not validate_email(email):
-            returnedmessage = "Your email is terrible."
+        if not ("@" in email and "." in email):
+            returnedmessage = "Your email is invalid."
         # Validate password
-        elif not validate_password(password, confirm):
-            returnedmessage = "Your password is terrible."
+        elif not validate_password(password, confirm) and returnedmessage == None:
+            returnedmessage = "Your email and password are invalid."
+
+        elif not validate_password(password, confirm) and returnedmessage != None: 
+            returnedmessage = "Your password is invalid."
+
         else:
-            # Success message   
-            returnedmessage = "Your password is good."
-            df1 = pd.DataFrame({'Email': [email], 'Password': [password]})
+            # Hash the password with salt
+            salted_hashed_password = hash_password_with_salt(password)
 
-            # Check if the CSV file exists and is not empty
-            if os.path.exists("data.csv") and os.stat("data.csv").st_size > 0:
-                df2 = pd.read_csv("data.csv")
-            else:
-                df2 = pd.DataFrame(columns=['Email', 'Password'])  # Initialize empty DataFrame
+            # Intilize row for data frame
+            s = "[{'recents': []}, {'usage': [0, 0, 0, 0, 0]}]"
+            df1 = pd.DataFrame({'Email': [email], 'Password': [salted_hashed_password], 'Info': [s]})
 
-            # Check if the user already exists
-            if email in df2['Email'].values:
-                returnedmessage = "You are already registered, why u doing this again :skull:"
+            # Check If empty using check_csv
+            empty, df2 = check_csv("data.csv")
+            if not empty and (email in df2['Email'].values):
+                returnedmessage = "You are already registered, please login."
+
             else:
-                # Append new entries
+                if empty:
+                    df2 = pd.DataFrame(columns=['Email', 'Password', 'Info']) 
                 result_df = pd.concat([df2, df1], ignore_index=True)
                 result_df.to_csv('data.csv', index=False)
-                returnedmessage = "You are finally logged in bruh."
-
+                returnedmessage = "Registration successful! You can now log in."
+                #ISHAAN
+                [{"bar": {"x axis": [], "data": []}, "pie": []}]
+        
     return render_template("register.html", returnedmessage=returnedmessage)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    returnedmessage = None
+    pie_percent = []
+    bar_x_axis = []
+    data = []
+    
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        empty, df2 = check_csv("data.csv")
+
+        if empty:
+            return render_template("login.html", returnedmessage='Invalid Username or Password')
+
+        elif email in df2['Email'].values:
+            for index, row in df2.iterrows():
+                if row["Email"] == email:
+                    # Compare the hashed password with the one in the CSV
+                    if verify_password(row["Password"], password):
+                        cd = ast.literal_eval(row["Info"])
+                        break
+                    else:
+                        returnedmessage = "Invalid Email or Password"
+                        return render_template("login.html", returnedmessage=returnedmessage)
+
+            # Calculate pie_percent based on 'usage'
+            nums = cd[1]['usage']
+            if nums != [0] * 5:
+                pie_percent = [(num / sum(nums)) * 100 for num in nums]
+            else:
+                pie_percent = [0] * 5  # Default values if no usage data
+
+            # Prepare bar chart data (optional for your case)
+            recents = cd[0]['recents']
+            if len(recents) > 0:
+                bar_x_axis = list(recents.keys())[-5:]  # Last 5 keys
+                data = list(recents.values())[-5:]  # Last 5 values
+
+            # Successful login, render pie.html with calculated pie_percent
+            returnedmessage = "You are successfully logged in!"
+            return render_template("pie.html", pie_data=pie_percent)
+
+        else:
+            returnedmessage = "Invalid Email or Password"
+
+    return render_template("login.html", returnedmessage=returnedmessage)
+
+
+# Password validation function
 def validate_password(password, confirm):
     errors = []
     special_characters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
     numbers = "0123456789"
 
     is_true = True
-    # Check for password confirmation and length constraints
     if password != confirm:
-        is_true = False
-        errors.append("Password is not the same as confirmed password \n")
+        return False
     if len(password) < 8:
-        is_true = False
-        errors.append("Password is too short \n")
+        return False
     if len(password) > 15:
-        is_true = False
-        errors.append("Password is too Long \n")
+        return False
     if not any(char in special_characters for char in password):
-        is_true = False
-        errors.append("Password is missing a special character \n")
+        return False
     if not any(char in numbers for char in password):
-        is_true = False
-        errors.append("Password is missing a numerical character \n")
-    if is_true:
-        return True
-    else:
-        s = ""
-        for i in range(1, len(errors) + 1):
-            error = errors[i - 1]
-            s += f"{i}. {error}, "
-        return s
+        return False
+    
+    return True
 
-def validate_email(email):
-    # Check if the email contains "@" and "."
-    return "@" in email and "." in email
+# Check if csv file is empty
+def check_csv(path_name):
+    empty = None
+    try:
+        df2 = pd.read_csv(path_name)
+
+    except pd.errors.EmptyDataError:
+        empty = True
+    return (empty, df2)
 
 if __name__ == '__main__':
     app.run(debug=True)
