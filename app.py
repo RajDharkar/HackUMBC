@@ -1,19 +1,35 @@
 from flask import Flask, redirect, render_template, request, flash, url_for
-import numpy as np
 import pandas as pd
 import os
 import hashlib
 import binascii
+import random
+import numpy as np
 import ast
-import datetime
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'yoursecretkey'  # Required for session management
+app.config['SECRET_KEY'] = '24924d82ea'  # Required for session management
+
+# Function to hash password with salt using SHA-256
+def hash_password_with_salt(password):
+    salt = os.urandom(16)  # Generate a 16-byte salt
+    salted_password = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
+    return binascii.hexlify(salt).decode() + ":" + binascii.hexlify(salted_password).decode()
+
+# Function to verify if a given password matches the stored password hash
+def verify_password(stored_password, provided_password):
+    salt, hashed_password = stored_password.split(":")
+    salt = binascii.unhexlify(salt.encode())  # Convert the stored salt back to bytes
+    hashed_provided_password = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
+    return binascii.hexlify(hashed_provided_password).decode() == hashed_password
 
 
-
-# Function to run the Monte Carlo simulation
+# Home Page >> Index.HTML
+@app.route('/')
+def homepage():
+    return render_template('index.html')
 def monte_carlo_simulation(email):
     # Fetch user data (replace this with actual logic from your dataset)
+    # Fetch user data from CSV
     df2 = pd.read_csv("data.csv")
     for index, row in df2.iterrows():
         if row["Email"] == email:
@@ -22,6 +38,16 @@ def monte_carlo_simulation(email):
     
     # Input current footprint values from the user's data
     current_usage = cd[1]['usage']
+    # Input current usage data from the user's info
+    current_usage = cd[1]['usage']  # ['Transportation', 'Electricity', 'Waste', 'Food Production', 'Manufacturing']
+
+    # Constants for Monte Carlo simulation
+    num_simulations = 1000
+    household_size = random.uniform(1, 6)  # Example: household size between 1 and 6
+    miles_per_week = random.uniform(50, 300)  # Miles driven per week
+    annual_kwh = random.uniform(4000, 12000)  # Annual electricity in kWh
+    food_waste_per_week = random.uniform(2, 15)  # Food waste in pounds per week
+    flights_per_year = random.uniform(0, 10)  # Flights per year
     
     # Define standard deviation for each category to simulate variability
     std_footprint = {
@@ -94,7 +120,7 @@ def dash():
 @app.route('/dashboard/<email>', methods=['GET', 'POST'])
 def dashboard(email):
     # Not empty and email already in
-    df2 = pd.read_csv("data.csv")
+    df2 = pd.read_csv("ctrl.csv")
     print(email)
     for index, row in df2.iterrows():
         if row["Email"] == email:
@@ -125,42 +151,6 @@ def dashboard(email):
     print(bar_graph)
     print(pie_percent)
     return render_template("dashboard.html", pieChart1=pie_graph, barChart1=bar_graph)
-def compute_footprint(email):
-    now = str(datetime.datetime.now())
-
-    transportation = request.form["Transportation"]
-    electricity = request.form["Electricity"]
-    waste = request.form["Waste"]
-    food_production = request.form["Food Production"]
-    manufacturing = request.form["Manufacturing"]
-    modes = [transportation, electricity, waste, food_production, manufacturing]
-    df2 = pd.read_csv("data.csv")
-    for index, row in df2.iterrows():
-        if row["Email"] == email:
-            cd = ast.literal_eval(row["Info"])
-            break
-    
-    nums = cd[1]["usage"]
-    for i in range(5):
-        cd[1]["usage"][i] = nums[i] + modes[i]
-            
-@app.route('/live_leaderboard', methods=['GET', 'POST'])
-def live_leaderboard(email):
-    # Not empty and email already in
-    df2 = pd.read_csv("data.csv")
-    print(email)
-    for index, row in df2.iterrows():
-        if row["Email"] == email:
-            cd = ast.literal_eval(row["Info"])
-            break
-    
-    nums = cd[1]['usage']
-    labels = ["Transportation", "Electricity", "Waste", "Food Production", "Manufacturing"]
-    result = []
-    for i, j in zip(nums, labels):
-        result.append({"Mode": j, "Usage": i}) 
-    sorted_t = sorted({labels : nums for i, j in zip(nums, labels)}, key=lambda x: x["Usage"])
-    return sorted_t[2::]
 
 # Home page >> register.HTML
 @app.route('/register', methods=['GET', 'POST'])
@@ -169,8 +159,8 @@ def register():
     returnedmessage = None
 
     if request.method == 'POST':
-        # Assigning variables, From request
-        email = request.form['email']
+        # Assigning variables from request
+        email = request.form['email'].lower()  # Force email to be lowercase to avoid duplicate issues
         password = request.form['password']
         confirm = request.form['confirm']
 
@@ -179,64 +169,71 @@ def register():
             returnedmessage = "Your email is invalid."
         # Validate password
         elif not validate_password(password, confirm):
-            returnedmessage = "Your email and password are invalid."
+            returnedmessage = "Your password is invalid."
 
         else:
             # Hash the password with salt
             salted_hashed_password = hash_password_with_salt(password)
 
-            # Intilize row for data frame
+            # Initialize row for DataFrame
             s = "[{'recents': []}, {'usage': [0, 0, 0, 0, 0]}]"
             df1 = pd.DataFrame({'Email': [email], 'Password': [salted_hashed_password], 'Info': [s]})
 
             empty = None
             try:
-                df2 = pd.read_csv("data.csv")
+                df2 = pd.read_csv("ctrl.csv")
+            except (pd.errors.EmptyDataError, FileNotFoundError):
+                empty = True
 
-            except pd.errors.EmptyDataError:
-                empty = True
-            except FileNotFoundError:
-                empty = True
             if not empty and (email in df2['Email'].values):
                 returnedmessage = "You are already registered, please login."
                 
             else:
                 if empty:
                     df2 = pd.DataFrame(columns=['Email', 'Password', 'Info']) 
+                # Concatenate the new user data to the existing DataFrame
                 result_df = pd.concat([df2, df1], ignore_index=True)
-                result_df.to_csv('data.csv', index=False)
+                print("Updated DataFrame after adding user:\n", result_df)  # Debugging output
+
+                # Save the updated DataFrame back to CSV
+                result_df.to_csv('ctrl.csv', index=False)
+                print("Data successfully written to CSV.")  # Confirmation of successful write
                 return redirect(url_for('dashboard', email=email))
-                # returnedmessage = "Registration successful! You can now log in."
-                
-                #ISHAAN
-                # [{"bar": {"x axis": [], "data": []}, "pie": []}]
+
     return render_template('register.html', returnedmessage=returnedmessage)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     returnedmessage = None
-    pie_percent = []
-    bar_x_axis = []
-    data = []
-    
+
     if request.method == 'POST':
-        email = request.form['email']
+        email = request.form['email'].lower()  # Make sure to lower case the email for consistency
         password = request.form['password']
         empty = None
-        try:
-            df2 = pd.read_csv("data.csv")
 
-        except pd.errors.EmptyDataError:
-            empty = True
-        except FileNotFoundError:
+        try:
+            df2 = pd.read_csv("ctrl.csv")
+        except (pd.errors.EmptyDataError, FileNotFoundError):
             empty = True
 
         if empty:
-            return render_template("login.html", returnedmessage='Invalid Username or Password')
+            returnedmessage = 'No users registered yet. Please register first.'
+            return render_template("login.html", returnedmessage=returnedmessage)
 
-        elif email in df2['Email'].values:
-            return redirect(url_for('dashboard', email=email))
+        # Check if email exists
+        if email in df2['Email'].values:
+            # Retrieve the stored password hash for the email
+            stored_password = df2.loc[df2['Email'] == email, 'Password'].values[0]
+            # Verify the provided password
+            if verify_password(stored_password, password):
+                return redirect(url_for('dashboard', email=email))
+            else:
+                returnedmessage = 'Invalid Username or Password'
+        else:
+            returnedmessage = 'Invalid Username or Password'
 
     return render_template("login.html", returnedmessage=returnedmessage)
+
 
 
 # Password validation function
