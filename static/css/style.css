@@ -162,8 +162,8 @@ navbar-logo {
 .left-column .button {
     display: inline-block;
     padding: 10px 20px;
-    background-color: var(--clr-green600);
-    color: var(--clr-white);
+    background-color: var(--clr-neon);
+    color: var(--clr-green600);
     text-decoration: none;
     border-radius: 5px;
     transition: background-color 0.3s;
@@ -171,6 +171,7 @@ navbar-logo {
 
 .left-column .button:hover {
     background-color: var(--clr-green700);
+    color: var(--clr-white);
 }
 
 .right-column img {
@@ -186,12 +187,13 @@ navbar-logo {
 }
 
 .footer-container {
-    display: flex;
+    display: grid;
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    flex-direction: column;
     text-align: center;
+    align-items: center;
+    align-self: center;
     font-size: var(--size-xl);
 }
 

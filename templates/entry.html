@@ -9,7 +9,7 @@
     <link href="https://api.fontshare.com/v2/css?f[]=public-sans@500,600,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-normalize.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/surrvey.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/survey.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components/utils.css') }}">
     <title>Carbon Footprint Quiz</title>
 </head>
@@ -17,7 +17,7 @@
 
 <h1>Carbon Footprint Quiz</h1>
 
-<form id="quizForm" action="{{ url_for('update') }}" method="POST">
+<form id="quizForm" action="{{ url_for('entry', email=email) }}" method="POST">
     <div class="question">
         <label for="question1">How many people live in your household?</label>
         <input type="range" id="question1" name="household_members" class="slider" min="1" max="10" value="3" step="1" oninput="updateValue(this)">
@@ -26,7 +26,7 @@
 
     <div class="question">
         <label for="question2">How many miles do you drive per week?</label>
-        <input type="range" id="question2" name="miles_driven" class="slider" min="0" max="500" value="100" step="10" oninput="updateValue(this)">
+        <input type="range" id="question2" name="miles_driver" class="slider" min="0" max="500" value="100" step="10" oninput="updateValue(this)">
         <div class="value">Value: <span id="value2">100</span></div>
     </div>
 
@@ -48,7 +48,7 @@
         <div class="value">Value: <span id="value5">1</span></div>
     </div>
 
-    <button class = "btn" type="submit">Submit</button>
+    <button class="btn" type="submit">Submit</button>
 </form>
 
 <script>

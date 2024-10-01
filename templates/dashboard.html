@@ -10,10 +10,10 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <ul>
-            <li class="btn"><a href="/dashboard">Dashboard</a></li>
-            <li class="btn"><a href="/entry">Carbon Footprint</a></li>
+            <li class="btn"><a href="{{ url_for('dashboard', email=email) }}">Dashboard</a></li>
+            <li class="btn"><a href="{{ url_for('entry', email=email) }}">Carbon Footprint</a></li>
             <li class="btn"><a href="/offset">Offset</a></li>
-            <li class="btn"><a href="/settings">Settings</a></li>
+            <li class="btn"><a href="{{url_for('homepage')}}">Settings</a></li>
         </ul>
     </div>
 
@@ -36,7 +36,7 @@
             <div class="card card-line-chart">
                 <h3>Line Chart of</h3>
                 <h2>Predicted Carbon-Footprint</h2>
-                <canvas id="lineChart"></canvas>
+                <canvas id="lineChart1"></canvas>
                 <h4>This line chart provides a forecast of your carbon footprint based on past behavior.</h4>
             </div>
             <div class="card card-pie-chart">

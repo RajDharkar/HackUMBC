@@ -71,60 +71,31 @@ const pieChart = new Chart(ctxPie, {
     }
 });
 
-const lineChartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [{
-        label: 'Carbon Footprint Trend',
-        fill: false,
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        pointBorderColor: 'rgba(75, 192, 192, 1)',
-        pointBackgroundColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(75, 192, 192, 1)',
-        data: [20, 25, 30, 27, 35, 40, 45] // Example data points
-    }]
-};
+const lineChartData = JSON.parse(document.getElementById('lineChartData').textContent);
 
-// Line chart options
-const lineChartOptions = {
-    responsive: true,
-    title: {
-        display: true,
-        text: 'Your Carbon Footprint Over Time'
+// Use the data passed from Flask (in `lineChartData`)
+const labels = lineChartData[0].x_labels;  // x-axis labels
+const data = lineChartData[1].y_data;  // y-axis data points
+
+console.log("line chart data acquired");
+ctxLine = document.getElementById('lineChart1').getContext('2d');
+const lineChart = new Chart(ctxLine, {
+    type: 'bar',  // Chart type is bar
+    data: {
+        labels: labels,  // X-axis labels
+        datasets: [{
+            label: 'Sample Data',
+            data: data,  // Y-axis data
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
     },
-    tooltips: {
-        mode: 'index',
-        intersect: false
-    },
-    hover: {
-        mode: 'nearest',
-        intersect: true
-    },
-    scales: {
-        x: {
-            display: true,
-            title: {
-                display: true,
-                text: 'Months'
-            }
-        },
-        y: {
-            display: true,
-            title: {
-                display: true,
-                text: 'Footprint (in tons)'
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
             }
         }
     }
-};
-
-// Select the canvas for the line chart
-const ctxLineChart = document.getElementById('lineChart1').getContext('2d');
-
-// Initialize the Line Chart using Chart.js
-const lineChart1 = new Chart(ctxLineChart, {
-    type: 'line',
-    data: lineChartData,
-    options: lineChartOptions
 });

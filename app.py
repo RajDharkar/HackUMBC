@@ -1,70 +1,15 @@
 from flask import Flask, redirect, render_template, request, flash, url_for
+from urllib.parse import quote
 import pandas as pd
 import os
 import hashlib
 import binascii
+import datetime 
 import random
 import numpy as np
 import ast
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '24924d82ea'  # Required for session management
-
-# Function to hash password with salt using SHA-256
-def hash_password_with_salt(password):
-    salt = os.urandom(16)  # Generate a 16-byte salt
-    salted_password = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
-    return binascii.hexlify(salt).decode() + ":" + binascii.hexlify(salted_password).decode()
-
-# Function to verify if a given password matches the stored password hash
-def verify_password(stored_password, provided_password):
-    salt, hashed_password = stored_password.split(":")
-    salt = binascii.unhexlify(salt.encode())  # Convert the stored salt back to bytes
-    hashed_provided_password = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
-    return binascii.hexlify(hashed_provided_password).decode() == hashed_password
-
-@app.route('/offset')
-def offset():
-    return render_template('offset.html')
-@app.route('/entry', methods=['GET', 'POST'])
-def entry():
-    returned_message = None  # Message to show after form submission
-    if request.method == 'POST':
-        # Retrieve form data
-        house_members = request.form.get("household_members", type=int)
-        miles_driver = request.form.get("miles_driver", type=float)
-        electricity = request.form.get("annual_electricity", type=float)
-        waste = request.form.get("food_waste", type=float)
-        plane = request.form.get("flights_per_year", type=float)
-
-        # Validate inputs
-        if (house_members is None or miles_driver is None or 
-            electricity is None or waste is None or plane is None):
-            returned_message = "Please fill in all fields."
-        else:
-            # Prepare data to append to CSV
-            new_data = {
-                "Household Members": house_members,
-                "Miles Driven": miles_driver,
-                "Annual Electricity": electricity,
-                "Food Waste": waste,
-                "Flights per Year": plane
-            }
-            
-            # Convert to DataFrame
-            df_new = pd.DataFrame([new_data])
-
-            # Append to existing CSV file
-            try:
-                df_existing = pd.read_csv("ctrl.csv")
-                df_combined = pd.concat([df_existing, df_new], ignore_index=True)
-            except (FileNotFoundError, pd.errors.EmptyDataError):
-                df_combined = df_new  # If file doesn't exist, create new DataFrame
-
-            df_combined.to_csv("ctrl.csv", index=False)  # Save back to CSV
-            
-            returned_message = "Data submitted successfully!"
-
-    return render_template('entry.html', returned_message=returned_message)
 # Home Page >> Index.HTML
 @app.route('/')
 def homepage():
@@ -147,14 +92,115 @@ def verify_password(stored_password, provided_password):
     return binascii.hexlify(hashed_provided_password).decode() == hashed_password
 # Home Page >> Index.HTML
 
-@app.route('/dashboard')
-def dash():
-    return render_template('dashboard.html')
+# @app.route('/dashboard')
+# def dash():
+#     return render_template('dashboard.html')
+@app.route('/offset')
+def offset():
+    return render_template('offset.html')
+@app.route('/entry/<email>', methods=['GET', 'POST'])
+def entry(email):
+    returned_message = None  # Message to show after form submission
+    if request.method == 'POST':
+        # Retrieve form data
+        house_members = request.form.get("household_members", type=int)
+        miles_driver = request.form.get("miles_driver", type=float)
+        electricity = request.form.get("annual_electricity", type=float)
+        waste = request.form.get("food_waste", type=float)
+        plane = request.form.get("flights_per_year", type=float)
+        print("HOIWER")
+        # Validate inputs
+        if (house_members is None or miles_driver is None or 
+            electricity is None or waste is None or plane is None):
+            returned_message = "Please fill in all fields."
+        else:
+            # Prepare data to append to CSV
+            new_data = {
+                "Household Members": house_members,
+                "Miles Driven": miles_driver,
+                "Annual Electricity": electricity,
+                "Food Waste": waste,
+                "Flights per Year": plane
+            }
+            print(new_data)
+            df2 = pd.read_csv("ctrl.csv")
+            for index, row in df2.iterrows():
+                if row["Email"] == email:
+                    cd = ast.literal_eval(row["Info"])
+                    break
+            print(cd)
+            lst = list(new_data.values())
+            for i in range(5):
+                cd[1]["usage"][i] += lst[i]
+
+            now = str(datetime.datetime.now())
+            cd[0]["recents"][now] = sum(lst)
+            
+            
+            # Find the row(s) where the 'email' column matches the provided email
+            mask = df2['Email'] == email
+            
+            # If the email exists in the CSV, update the information
+            if mask.any():print(new_data)
+            df2 = pd.read_csv("ctrl.csv")
+            for index, row in df2.iterrows():
+                if row["Email"] == email:
+                    cd = ast.literal_eval(row["Info"])
+                    break
+
+            lst = list(new_data.values())
+            for  i in range(5):
+                cd[1]["usage"][i] += lst[i]
+
+            now = str(datetime.datetime.now())
+            cd[0]["recents"][now] = sum(lst)
+            
+            
+            # Find the row(s) where the 'email' column matches the provided email
+            mask = df2['Email'] == email
+            
+            # If the email exists in the CSV, update the information
+            if mask.any():print(new_data)
+            df2 = pd.read_csv("ctrl.csv")
+            for index, row in df2.iterrows():
+                if row["Email"] == email:
+                    cd = ast.literal_eval(row["Info"])
+                    break
+
+            lst = list(new_data.values())
+            for  i in range(5):
+                cd[1]["usage"][i] += lst[i]
+
+            now = str(datetime.datetime.now())
+            cd[0]["recents"][now] = sum(lst)
+            
+            
+            # Find the row(s) where the 'email' column matches the provided email
+            mask = df2['Email'] == email
+            
+            # If the email exists in the CSV, update the information
+            if mask.any():
+                # Update all columns (except 'email') with the new string
+                for column in df2.columns:
+                    if column != 'Email':  # Ensure we don't overwrite the email field
+                        df2.loc[mask, column] = str(cd)
+        
+                # Save the updated DataFrame back to the CSV file
+                df2.to_csv("ctrl.csv", index=False)
+                # Redirect without quoting the email
+        return redirect(url_for('dashboard', email=email))
+
+    return render_template('entry.html', email=email)
+
 @app.route('/dashboard/<email>', methods=['GET', 'POST'])
 def dashboard(email):
-    # Not empty and email already in
+    # Load the CSV and find the user's data based on the email
     df2 = pd.read_csv("ctrl.csv")
-    print(email)
+    print("Email received in dashboard:", email)  # Debugging statement
+    
+    # Initialize variable for user data
+    cd = {}
+    
     for index, row in df2.iterrows():
         if row["Email"] == email:
             cd = ast.literal_eval(row["Info"])
@@ -162,12 +208,19 @@ def dashboard(email):
 
     # Calculate pie_percent based on 'usage'
     nums = cd[1]['usage']
+    pie_percent = []
     if nums != [0] * 5:
         pie_percent = [(num / sum(nums)) * 100 for num in nums]
+        for i in range(5):
+            if i == 1 or i == 2:
+                s = ((nums[i] / sum(nums)) * 100) / 20000
+                pie_percent.append(s)
+            else:
+                pie_percent.append((nums[i] / sum(nums)) * 100)
     else:
-        pie_percent = [0] * 5  # Default values if no usage data
+        pie_percent = [20] * 5  # Default values if no usage data
 
-    # Prepare bar chart data (optional for your case)
+    # Prepare bar chart data
     recents = cd[0]['recents']
     if len(recents) > 5:
         bar_x_axis = list(recents.keys())[-5:]  # Last 5 keys
@@ -178,12 +231,25 @@ def dashboard(email):
     else:
         bar_x_axis = [0, 0, 0, 0, 0]
         data = [0, 0, 0, 0, 0]
+    nums = cd[1]["usage"]
 
+    line_data = []
+    line_x_axis = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"]
+    for i in range(4):
+        line_data.append(((nums[i] + nums[i + 1]) / 2) + 0.1 * (random.randint(1, 5)))
+    line_data.append(random.randint(1, 100400))
+
+    # Create bar and pie chart data structures
     bar_graph = [{"x_labels": bar_x_axis}, {"y_data": data}]
     pie_graph = [{"labels": ["Transportation", "Electricity", "Waste", "Food Production", "Manufacturing"]}, {"data": pie_percent}]
-    print(bar_graph)
-    print(pie_percent)
-    return render_template("dashboard.html", pieChart1=pie_graph, barChart1=bar_graph)
+    line_graph = [{"x_labels": line_x_axis}, {"y_data": line_data}] 
+    # Print for debugging
+    print("Bar Graph Data:", bar_graph)
+    print("Pie Percent Data:", pie_percent)
+    print("Line Graph:", line_graph)
+    # Render the dashboard template with the appropriate data
+    return render_template("dashboard.html", pieChart1=pie_graph, barChart1=bar_graph, lineChart1=line_graph, email=email)
+
 
 # Home page >> register.HTML
 @app.route('/register', methods=['GET', 'POST'])
@@ -209,7 +275,7 @@ def register():
             salted_hashed_password = hash_password_with_salt(password)
 
             # Initialize row for DataFrame
-            s = "[{'recents': []}, {'usage': [0, 0, 0, 0, 0]}]"
+            s = "[{'recents': {}}, {'usage': [0, 0, 0, 0, 0]}]"
             df1 = pd.DataFrame({'Email': [email], 'Password': [salted_hashed_password], 'Info': [s]})
 
             empty = None
@@ -226,7 +292,7 @@ def register():
                     df2 = pd.DataFrame(columns=['Email', 'Password', 'Info']) 
                 # Concatenate the new user data to the existing DataFrame
                 result_df = pd.concat([df2, df1], ignore_index=True)
-                print("Updated DataFrame after adding user:\n", result_df)  # Debugging output
+                print("Updated DataFrame after adding user:n", result_df)  # Debugging output
 
                 # Save the updated DataFrame back to CSV
                 result_df.to_csv('ctrl.csv', index=False)
@@ -272,7 +338,7 @@ def login():
 # Password validation function
 def validate_password(password, confirm):
     errors = []
-    special_characters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+    special_characters = "!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"
     numbers = "0123456789"
 
     is_true = True

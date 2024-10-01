@@ -35,6 +35,8 @@ body {
     align-items: center;
     height: 100vh;
     padding: var(--spacing-large);
+    padding-left: 400px;
+    padding-right: 400px;
     overflow: hidden; /* Prevent overflow */
 }
 
@@ -82,6 +84,7 @@ h1.heading {
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-medium);
+    padding: 50px;
 }
 
 .form-group {

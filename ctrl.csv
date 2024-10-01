@@ -1,2 +1,3 @@
 Email,Password,Info
-fanum@gmail.com,6def85e9b319f3dbe5493619cf1f69ee:dc8efa891a63b360ff5f6bdb43e2f94abfe202a68a2d6c0a84e735382acb6a5a,"[{'recents': []}, {'usage': [0, 0, 0, 0, 0]}]"
+testing@gmail.com,9fdd5bd92dced01f930f0cf79334dccb:4c20f62a8e4d8a623cc77ea7c137f07f86819330617642f822f28a75e1c66e4a,"[{'recents': {}}, {'usage': [0, 0, 0, 0, 0]}]"
+fanum@gmail.com,"[{'recents': {'2024-09-29 16:35:40.234779': 18395.0}}, {'usage': [2, 380.0, 18000.0, 5.0, 8.0]}]","[{'recents': {'2024-09-29 16:35:40.234779': 18395.0}}, {'usage': [2, 380.0, 18000.0, 5.0, 8.0]}]"

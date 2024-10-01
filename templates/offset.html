@@ -11,10 +11,10 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <ul>
-            <li class="btn"><a href="/dash">Dashboard</a></li>
-            <li class="btn"><a href="/entry">Carbon Footprint</a></li>
+            <li class="btn"><a href="{{ url_for('dashboard', email=email) }}">Dashboard</a></li>
+            <li class="btn"><a href="{{ url_for('entry', email=email) }}">Carbon Footprint</a></li>
             <li class="btn"><a href="/offset">Offset</a></li>
-            <li class="btn"><a href="/settings">Settings</a></li>
+            <li class="btn"><a href="{{url_for('homepage')}}">Settings</a></li>
         </ul>
     </div>
 
