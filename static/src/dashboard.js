@@ -70,3 +70,61 @@ const pieChart = new Chart(ctxPie, {
         maintainAspectRatio: true
     }
 });
+
+const lineChartData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [{
+        label: 'Carbon Footprint Trend',
+        fill: false,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        pointBorderColor: 'rgba(75, 192, 192, 1)',
+        pointBackgroundColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(75, 192, 192, 1)',
+        data: [20, 25, 30, 27, 35, 40, 45] // Example data points
+    }]
+};
+
+// Line chart options
+const lineChartOptions = {
+    responsive: true,
+    title: {
+        display: true,
+        text: 'Your Carbon Footprint Over Time'
+    },
+    tooltips: {
+        mode: 'index',
+        intersect: false
+    },
+    hover: {
+        mode: 'nearest',
+        intersect: true
+    },
+    scales: {
+        x: {
+            display: true,
+            title: {
+                display: true,
+                text: 'Months'
+            }
+        },
+        y: {
+            display: true,
+            title: {
+                display: true,
+                text: 'Footprint (in tons)'
+            }
+        }
+    }
+};
+
+// Select the canvas for the line chart
+const ctxLineChart = document.getElementById('lineChart1').getContext('2d');
+
+// Initialize the Line Chart using Chart.js
+const lineChart1 = new Chart(ctxLineChart, {
+    type: 'line',
+    data: lineChartData,
+    options: lineChartOptions
+});

@@ -13,7 +13,7 @@
             <li class="btn"><a href="/dashboard">Dashboard</a></li>
             <li class="btn"><a href="/entry">Carbon Footprint</a></li>
             <li class="btn"><a href="/offset">Offset</a></li>
-            <li class="btn"><a href="/templates/dashboard.html">Settings</a></li>
+            <li class="btn"><a href="/settings">Settings</a></li>
         </ul>
     </div>
 
@@ -56,6 +56,10 @@
 
 <script id="pieChartData" type="application/json">
     {{ pieChart1 | tojson }}
+</script>
+
+<script id="lineChartData" type="application/json">
+    {{ lineChart1 | tojson }}
 </script>
 
 <!-- Load Chart.js CDN -->

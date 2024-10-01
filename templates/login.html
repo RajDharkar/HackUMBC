@@ -4,36 +4,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoTrack Registration</title>
+    <title>EcoTrack Login</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=public-sans@500,600,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/utils.css') }}">
 </head>
 
 <body>
-    <h1>EcoTrack Registration</h1>
+    <div class="container login-container">
+        <h1 class="heading">EcoTrack login</h1>
 
-    <!-- Display flash messages -->
-    {% with messages = get_flashed_messages() %}
+        <!-- Display flash messages -->
+        {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
+        <ul class="message-list">
+            {% for message in messages %}
+            <li class="flash-message">{{ message }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
-    {% endwith %}
+        {% endwith %}
 
-    <form action="{{ url_for('login') }}" method="POST">
-        <label for="email">Email:</label><br>
-        <input type="email" name="email" id="email"><br><br>
+        <form action="{{ url_for('login') }}" method="POST" class="login-form">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" class="form-input" required>
+            </div>
 
-        <label for="password">Password:</label><br>
-        <input type="password" name="password" id="password"><br><br>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" class="form-input" required>
+            </div>
 
-        <input type="submit" value="Login">
-    </form>
+            <div class="form-group">
+                <label for="confirm">Confirm Password:</label>
+                <input type="password" name="confirm" id="confirm" class="form-input" required>
+            </div>
 
-    {% if returnedmessage %}
-        <p>{{ returnedmessage }}</p>
-    {% endif %}
+            <input type="submit" value="login" class="form-button">
+        </form>
+
+        {% if returnedmessage != None %}
+        <p class="message">{{ returnedmessage }}</p>
+        {% endif %}
+    </div>
 </body>
 
 </html>
