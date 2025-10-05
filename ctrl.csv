@@ -1,3 +1,5 @@
 Email,Password,Info
 testing@gmail.com,9fdd5bd92dced01f930f0cf79334dccb:4c20f62a8e4d8a623cc77ea7c137f07f86819330617642f822f28a75e1c66e4a,"[{'recents': {}}, {'usage': [0, 0, 0, 0, 0]}]"
 fanum@gmail.com,"[{'recents': {'2024-09-29 16:35:40.234779': 18395.0}}, {'usage': [2, 380.0, 18000.0, 5.0, 8.0]}]","[{'recents': {'2024-09-29 16:35:40.234779': 18395.0}}, {'usage': [2, 380.0, 18000.0, 5.0, 8.0]}]"
+test2@gmail.com,6bf4ad104f8d41cddfc7fec46134e7db:0eda8d1a8f0c8ad445d06040748137756ddf93fe8fc04d8eab3f327284527d5e,"[{'recents': {}}, {'usage': [0, 0, 0, 0, 0]}]"
+admin@gmail.com,bdde6af25665ac90e11f8a44304c37a9:2fa6749b8772a4531a6774874549f6d836dd14b0c7b47850ac1a914128b80dd9,"[{'recents': {}}, {'usage': [0, 0, 0, 0, 0]}]"
